@@ -673,6 +673,52 @@
       border: 1px solid rgba(245, 158, 11, 0.45);
       margin-right: 5px;
     }
+    .custom-builder-card {
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.14), rgba(23, 32, 51, 0.96));
+      border: 1px solid rgba(45, 212, 191, 0.45);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    }
+    .saved-ft-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(20, 184, 166, 0.14);
+      border: 1px solid rgba(45, 212, 191, 0.45);
+      color: #99f6e4;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .saved-ft-chip:active { opacity: 0.85; }
+    .saved-ft-del {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.65);
+      color: #fda4af;
+      font-size: 10px;
+      line-height: 1;
+      margin-left: 2px;
+    }
+    .gap-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+    }
 
   </style>
 </head>
@@ -686,6 +732,7 @@
   <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
     <button class="btn btn-success btn-sm" id="installPwaBtn" style="display:none;" onclick="triggerPwaInstall()">📲 Install</button>
     <button class="btn btn-amber btn-sm" onclick="selectSession('quick_fullbody')" title="30-40 Min All-Superset Full-Body">⚡ Quick 35m</button>
+    <button class="btn btn-outline btn-sm" style="border-color:rgba(45,212,191,0.55); color:#5eead4;" onclick="openCustomWorkoutSession()" title="Quick Custom Free-Text Workout Builder + Gap Analysis">✏️ Custom</button>
     <button class="btn btn-outline btn-sm" onclick="scrollToBodyMap()" title="Neglected Muscles & Mobility Map">🧬 Body Map</button>
     <button class="btn btn-strava btn-sm" onclick="openActivityModal()" title="Pull Runs, Rows & Bike Rides from Strava">🟧 Pull Strava</button>
     <button class="btn btn-outline btn-sm" onclick="openDailyCheckModal()">🩺 Check/BW</button>
@@ -813,7 +860,10 @@
   <!-- FOCUS MODE & ADD ANY EXERCISE BAR -->
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:6px; flex-wrap:wrap;">
     <button class="btn btn-primary" style="flex:1;" onclick="openAddExerciseModal()">
-      ➕ Add Any Exercise (Back Ext, Plank, Catalog...)
+      ➕ Add Any Exercise (Sit-Up, Back Ext, Free-Text...)
+    </button>
+    <button class="btn btn-outline btn-sm" id="toggleCustomBuilderBtn" style="color:#5eead4; border-color:rgba(45,212,191,0.5);" onclick="toggleCustomBuilderPanel()" title="Open Quick Free-Text Builder & Live Gap Analysis">
+      ✏️ Free-Text &amp; Gaps
     </button>
     <button class="btn btn-outline btn-sm" id="resetOrderBtn" style="display:none; color:#93c5fd; border-color:rgba(59,130,246,0.5);" onclick="resetCurrentWorkoutOrder()" title="Reset exercise order back to default template order">
       ↺ Reset Order
@@ -825,6 +875,9 @@
       🎯 Collapse Done: ON
     </button>
   </div>
+
+  <!-- QUICK CUSTOM WORKOUT FREE-TEXT BUILDER + LIVE GAP ANALYSIS -->
+  <div id="customBuilderContainer"></div>
 
   <!-- WARMUP SECTION (COLLAPSED BY DEFAULT) -->
   <div id="warmupContainer"></div>
@@ -935,7 +988,7 @@
   </div>
 </div>
 
-<!-- MODAL 1: ADD ANY EXERCISE (QUICK CHIPS, FULL CATALOG SEARCH, OR CUSTOM) -->
+<!-- MODAL 1: ADD ANY EXERCISE (QUICK CHIPS, SAVED FREE-TEXT, FULL CATALOG SEARCH, OR NEW CUSTOM) -->
 <div class="modal-backdrop" id="addExModal">
   <div class="modal-sheet">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -952,19 +1005,37 @@
       </select>
     </div>
 
-    <label class="field-label">1-Tap Quick Add (Core, Holds & Skills)</label>
+    <div id="savedFreeTextModalSection" style="display:none; margin-bottom:10px; padding:8px 10px; border-radius:8px; background:rgba(20,184,166,0.11); border:1px solid rgba(45,212,191,0.4);">
+      <label class="field-label" style="color:#5eead4; margin-bottom:5px;">✏️ Your Saved Free-Text Exercises (1-Tap Add • Synced to Cloud)</label>
+      <div id="savedFreeTextChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+    </div>
+
+    <label class="field-label">1-Tap Quick Add (Core, Sit-Up, Holds &amp; Skills)</label>
     <div class="chip-list" id="quickAddChips"></div>
 
-    <label class="field-label">Search Full Exercise Catalog (All Sheet Tabs)</label>
-    <input type="text" id="catalogSearchInput" placeholder="Type e.g. Back Extension, Side Plank, Nordic, Row..." oninput="renderCatalogSearchResults()" />
+    <label class="field-label">Search Full Exercise Catalog + Saved Free-Text</label>
+    <input type="text" id="catalogSearchInput" placeholder="Type e.g. Sit-Up, Back Extension, Pendulum Squat..." oninput="renderCatalogSearchResults()" />
     <div id="catalogSearchResults" style="max-height:180px; overflow-y:auto; margin:8px 0; border:1px solid var(--border); border-radius:8px;"></div>
 
     <div style="border-top:1px solid var(--border); padding-top:10px; margin-top:10px;">
-      <label class="field-label">Or Type Any Custom Exercise Name</label>
-      <div style="display:flex; gap:6px;">
-        <input type="text" id="customExNameInput" placeholder="e.g. Pendulum Squat, Seated Leg Curl Machine..." onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomExerciseFromInput();}" />
-        <input type="number" id="customExSetsInput" value="2" min="1" max="10" style="width:68px;" />
-        <button class="btn btn-primary" onclick="addCustomExerciseFromInput()">Add</button>
+      <label class="field-label">Or Type Any Custom Free-Text Exercise (Auto-Saved for Future Workouts)</label>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <input type="text" id="customExNameInput" style="flex:1; min-width:170px;" placeholder="e.g. Pendulum Squat, Cable Crunch, GHD Sit-Up..." onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomExerciseFromInput();}" />
+        <select id="customExTagSelect" style="width:130px; font-size:12px;" title="Muscle/Movement focus for Body Map & Gap Analysis">
+          <option value="auto">🧬 Auto-Detect</option>
+          <option value="core_ant">🎯 Core / Abs</option>
+          <option value="core_lat">🧭 Lateral / Carry</option>
+          <option value="quads">🦵 Quads / Squat</option>
+          <option value="hinge">🍑 Hinge / Hamstring</option>
+          <option value="push">💪 Push / Chest</option>
+          <option value="pull">🧗 Pull / Back</option>
+          <option value="shoulders">🙌 Shoulders / OH</option>
+          <option value="arms_grip">✊ Arms / Grip</option>
+          <option value="calves">🦶 Calves / Ankle</option>
+          <option value="mobility">🧘 Mobility / Stretch</option>
+        </select>
+        <input type="number" id="customExSetsInput" value="2" min="1" max="10" style="width:62px;" title="Sets" />
+        <button class="btn btn-primary" onclick="addCustomExerciseFromInput()">+ Add</button>
       </div>
     </div>
   </div>
@@ -1289,7 +1360,7 @@ const WORKOUT_TEMPLATES = {
           { name: "Knee-Supported Seated KB / Plate External Rotation", pair: "Pair E1", sets: 2, defaultReps: "4/side", defaultHold: "20", cue: "4 reps/side: 4s eccentric across torso into internal rotation -> 4s pause", holdCue: "Rep 5: 20–25s active hover 1 inch above bottom stretch" },
           { name: "Side-Lying KB / Plate Internal Rotation", pair: "Pair E2", sets: 2, defaultReps: "4/side", defaultHold: "20", cue: "4 reps/side: 4s eccentric into external rotation stretch -> 4s pause", holdCue: "Rep 5: 20–25s active hold at end-range stretch" },
           { name: "Heavy Hand Gripper / Captains of Crush (Crush Grip)", pair: "Pair F1", sets: 2, defaultReps: "4/hand", defaultHold: "15", cue: "4 reps/hand: Crush to close -> 2s squeeze -> 4s slow eccentric opening", holdCue: "Rep 5: 15–20s closed crush hold + 20s open-hand stretch" },
-          { name: "Front Plank / RKC Plank or Hollow-Body Hold", pair: "Pair F2 (Core)", sets: 2, defaultReps: "35s hold", defaultHold: "35", cue: "4 breath cycles max-tension RKC brace (posterior pelvic tilt, glutes locked)", holdCue: "Hold: 30–45s strict RKC plank or hollow-body hold" }
+          { name: "Front Plank / RKC Plank or Hollow-Body Hold", pair: "Pair F2 (Core)", sets: 2, defaultReps: "35s hold", defaultHold: "35", cue: "4 breath cycles max-tension RKC brace — or tap ⇄ Alt for Sit-Up (Strict / Ab-Mat / Weighted or Decline)", holdCue: "Hold: 30–45s strict RKC plank or hollow-body hold" }
         ]
       },
       "upper_1a_b": {
@@ -1439,7 +1510,7 @@ const WORKOUT_TEMPLATES = {
           { name: "Knee-Supported Seated KB / Plate External Rotation", pair: "Pair E1", sets: 3, defaultReps: "4+1/side", defaultHold: "20", cue: "4s eccentric -> 4s pause", holdCue: "Rep 5: 20–25s hover" },
           { name: "Side-Lying KB / Plate Internal Rotation", pair: "Pair E2", sets: 3, defaultReps: "4+1/side", defaultHold: "20", cue: "4s eccentric -> 4s pause", holdCue: "Rep 5: 20–25s hold" },
           { name: "Heavy Hand Gripper / Captains of Crush (Crush Grip)", pair: "Pair F1", sets: 3, defaultReps: "4+1/hand", defaultHold: "15", cue: "Crush to close -> 2s squeeze -> 4s eccentric", holdCue: "Rep 5: 15–20s closed crush hold" },
-          { name: "Front Plank / RKC Plank or Hollow-Body Hold", pair: "Pair F2", sets: 3, defaultReps: "35–45s", defaultHold: "35", cue: "Max-tension RKC plank or hollow hold", holdCue: "35–45s strict hold" }
+          { name: "Front Plank / RKC Plank or Hollow-Body Hold", pair: "Pair F2", sets: 3, defaultReps: "35–45s", defaultHold: "35", cue: "Max-tension RKC plank / hollow hold — or tap ⇄ Alt for Sit-Up (Strict / Ab-Mat / Weighted or Decline)", holdCue: "35–45s strict hold" }
         ]
       },
       "long_run": {
@@ -1468,7 +1539,7 @@ const WORKOUT_TEMPLATES = {
           { name: "Deficit Pike Push-Up (Elevated Feet)", pair: "Pair D1", sets: 3, defaultReps: "4+1", defaultHold: "20", cue: "4s eccentric -> 3s bottom pause", holdCue: "Rep 5: 20s overhead lockout hold" },
           { name: "Incline Prone Trap-3 Y-Raise (Dumbbell or Cable)", pair: "Pair D2", sets: 3, defaultReps: "4+1", defaultHold: "20", cue: "3s lift -> 3s top pause -> 4s eccentric", holdCue: "Rep 5: 20s overhead Y-hold" },
           { name: "Barbell Finger Roll-Outs (Distal Fingertip Grip)", pair: "Pair G1", sets: 3, defaultReps: "4+1", defaultHold: "20", cue: "4s roll to fingertips -> 3s hook pause", holdCue: "Rep 5: 20–30s fingertip hold" },
-          { name: "Standing Cable / Band Pallof Press + Overhead Raise", pair: "Pair G2 / Finisher", sets: 3, defaultReps: "8/side", cue: "Rotate Pallof Press, Suitcase Carry, TGU, or Landmine 180s", holdCue: "Plus 15–20 min priority mobility after session" }
+          { name: "Standing Cable / Band Pallof Press + Overhead Raise", pair: "Pair G2 / Finisher", sets: 3, defaultReps: "8/side", cue: "Rotate Pallof Press, Suitcase Carry, TGU, Landmine 180s, or Sit-Up (Strict / Ab-Mat / Weighted)", holdCue: "Plus 15–20 min priority mobility after session" }
         ]
       },
       "lower_b": {
@@ -1595,6 +1666,7 @@ WORKOUT_TEMPLATES["4"] = JSON.parse(JSON.stringify(WORKOUT_TEMPLATES["1b"]));
 WORKOUT_TEMPLATES["4"].label = "Phase 4: Final Realization (Weeks 51–61)";
 
 const QUICK_ADD_EXERCISES = [
+  { name: "Sit-Up (Strict / Ab-Mat / Weighted or Decline)", pair: "Anterior Core", defaultReps: "8–12", defaultHold: "20", cue: "3–4s segmental eccentric roll-down -> brief bottom stretch (+ optional 20s hollow/mid hold)" },
   { name: "Back Extension + Isometric Sørensen Hold (Roman Chair / Prone Arch)", pair: "Core / GHR", defaultReps: "45s hold", defaultHold: "45", cue: "Isometric GHR / Roman Chair hold" },
   { name: "Strict Side Plank (Short-Lever -> Full Isometric Hold)", pair: "Lateral Core", defaultReps: "15–30s/side", defaultHold: "15", cue: "Elbow under shoulder, glutes & hips stacked" },
   { name: "Front Plank / RKC Plank or Hollow-Body Hold", pair: "Anterior Core", defaultReps: "35–45s hold", defaultHold: "35", cue: "Max-tension RKC plank or hollow hold" },
@@ -1611,6 +1683,7 @@ const QUICK_ADD_EXERCISES = [
 ];
 
 const MASTER_CATALOG = [
+  "Sit-Up (Strict / Ab-Mat / Weighted or Decline)",
   "Back Extension + Isometric Sørensen Hold (Roman Chair / Prone Arch)",
   "Strict Side Plank (Short-Lever -> Full Isometric Hold)",
   "Front Plank / RKC Plank or Hollow-Body Hold",
@@ -1668,6 +1741,7 @@ const MASTER_CATALOG = [
   "Bench Pigeon Good Morning (Unloaded or Light Plate Only)",
   "Loaded Seated Butterfly (Groin \"Knees to Floor\" — ATG Hip #2)",
   "Elevated Gymnastic Bridge Push-Outs",
+  "Supine Legs-Up Nasal Box Breathing",
   "Continuous Easy Base Run",
   "Weekday Long Run / Mountain Trail Day",
   "Post-Easy Run Strides & Short Hill Sprints",
@@ -2051,11 +2125,11 @@ const QUICK_FULLBODY_SESSION = {
     },
     {
       name: "Copenhagen Plank (Side Plank Adduction)",
-      pair: "Giant Set D2 (Lateral Core)",
+      pair: "Giant Set D2 (Lateral / Ant. Core)",
       sets: 2,
       defaultReps: "4 + 20s/side",
       defaultHold: "20",
-      cue: "No rest into D3! 4 active adductor lifts + 20–25s hold per side (or switch to Strict Side Plank / RKC Plank via ⇄ Alt)",
+      cue: "No rest into D3! 4 active adductor lifts + 20–25s hold per side (or switch to Sit-Up / Strict Side Plank / RKC Plank via ⇄ Alt)",
       holdCue: "Hold: 20–25s per side (hips stacked vertically)"
     },
     {
@@ -2070,11 +2144,21 @@ const QUICK_FULLBODY_SESSION = {
   ]
 };
 
+const CUSTOM_WORKOUT_SESSION = {
+  id: "custom_workout",
+  name: "✏️ Custom / Free-Text Workout (Build On the Fly + Gap Analysis)",
+  category: "Tendon & Mobility (Upper)",
+  legHeavy: false,
+  warmups: [],
+  exercises: []
+};
+
 Object.keys(WORKOUT_TEMPLATES).forEach(pk => {
   WORKOUT_TEMPLATES[pk].sessions["quick_fullbody"] = JSON.parse(JSON.stringify(QUICK_FULLBODY_SESSION));
   if (!WORKOUT_TEMPLATES[pk].rotationOrder.includes("quick_fullbody")) {
     WORKOUT_TEMPLATES[pk].rotationOrder.push("quick_fullbody");
   }
+  WORKOUT_TEMPLATES[pk].sessions["custom_workout"] = JSON.parse(JSON.stringify(CUSTOM_WORKOUT_SESSION));
 });
 
 // Upgrade Full Gym Location Substitutions so Full Gym actively prioritizes Dumbbells, Roman Chair Back Ext & Cables
@@ -2237,6 +2321,7 @@ const EXERCISE_DEMO_LINKS = {
   "Side-Lying KB / Plate Internal Rotation": { url: "https://www.youtube.com/results?search_query=side+lying+shoulder+internal+rotation+stretch+dumbbell", label: "🎥 Demo" },
   "Heavy Hand Gripper / Captains of Crush (Crush Grip)": { url: "https://www.youtube.com/results?search_query=captains+of+crush+gripper+technique", label: "🎥 Demo" },
   "Front Plank / RKC Plank or Hollow-Body Hold": { url: "https://www.youtube.com/results?search_query=rkc+plank+hollow+body+hold+tutorial", label: "🎥 Demo" },
+  "Sit-Up (Strict / Ab-Mat / Weighted or Decline)": { url: "https://www.youtube.com/results?search_query=strict+ab+mat+sit+up+weighted+decline+eccentric+form", label: "🎥 Demo" },
   "Barbell Finger Roll-Outs (Distal Fingertip Grip)": { url: "https://www.youtube.com/results?search_query=barbell+finger+curls+roll+outs+grip", label: "🎥 Demo" },
   "Standing Cable / Band Pallof Press + Overhead Raise": { url: "https://www.youtube.com/results?search_query=pallof+press+with+overhead+raise", label: "🎥 Demo" },
   "Barbell Back Squat (Low-Bar or High-Bar)": { url: "https://www.youtube.com/results?search_query=high+bar+back+squat+controlled+tempo+form", label: "🎥 Demo" },
@@ -3287,6 +3372,84 @@ const EXERCISE_ALTERNATIVES = {
         demoUrl: "https://www.daniwinksflexibility.com/flexopedia/floaty-birds"
       }
     ]
+  },
+  "Front Plank / RKC Plank or Hollow-Body Hold": {
+    near: [
+      {
+        title: "RKC Max-Tension Front Plank or Hollow-Body Hold",
+        cue: "Posterior pelvic tilt locked, glutes & quads squeezed hard -> 30–45s max-tension hold",
+        variant: "RKC Plank / Hollow-Body Hold",
+        demoUrl: "https://www.youtube.com/results?search_query=rkc+plank+hollow+body+hold+tutorial"
+      },
+      {
+        title: "Ab-Wheel / Stability-Ball Anti-Extension Rollout",
+        cue: "Dynamic anti-extension swap: Keep lower ribs tucked -> roll out to clean range + 3s extended pause",
+        variant: "Ab-Wheel / Ball Rollout",
+        demoUrl: "https://www.youtube.com/results?search_query=ab+wheel+rollout+posterior+pelvic+tilt"
+      }
+    ],
+    far: [
+      {
+        title: "Sit-Up (Strict / Ab-Mat / Weighted or Decline)",
+        cue: "Dynamic anterior-core swap: 8–12 controlled reps w/ 3–4s segmental eccentric roll-down -> brief bottom stretch (+ optional 20s hollow hold)",
+        variant: "Sit-Up (Strict / Ab-Mat / Weighted)",
+        demoUrl: "https://www.youtube.com/results?search_query=strict+ab+mat+sit+up+weighted+decline+eccentric+form"
+      },
+      {
+        title: "Strict Hanging Knee / Straight-Leg Raise (Zero Swing)",
+        cue: "Decompressive bar anterior-core substitute: Curl pelvis upward -> 2s top pause + 4s controlled lower",
+        variant: "Strict Hanging Leg Raise",
+        demoUrl: "https://www.youtube.com/results?search_query=strict+hanging+leg+raise+form"
+      },
+      {
+        title: "Kneeling Cable Crunch or Weighted Dead-Bug",
+        cue: "Loaded spinal-flexion or floor core substitute: Smooth segmental crunch / rib-locked contralateral reach",
+        variant: "Cable Crunch / Weighted Dead-Bug",
+        demoUrl: "https://www.youtube.com/results?search_query=kneeling+cable+crunch+proper+form"
+      }
+    ]
+  },
+  "Sit-Up (Strict / Ab-Mat / Weighted or Decline)": {
+    near: [
+      {
+        title: "Strict Floor / Ab-Mat Segmental Sit-Up (Unanchored Feet)",
+        cue: "Zero momentum: Articulate spine up & roll down vertebra-by-vertebra over 3–4s -> brief bottom abdominal stretch",
+        variant: "Strict Ab-Mat / Unanchored Sit-Up",
+        demoUrl: "https://www.youtube.com/results?search_query=strict+unanchored+ab+mat+sit+up+form"
+      },
+      {
+        title: "Weighted Plate / Dumbbell or Decline Bench Sit-Up",
+        cue: "Loaded anterior-core strength: Hold plate/DB at chest or overhead on decline bench -> 8–12 reps w/ 4s eccentric",
+        variant: "Weighted / Decline Sit-Up",
+        demoUrl: "https://www.youtube.com/results?search_query=weighted+decline+sit+up+slow+eccentric"
+      },
+      {
+        title: "GHD / Roman Chair Full-Range Sit-Up (Controlled Extension)",
+        cue: "Lengthened rectus abdominis & hip-flexor sit-up: Smooth controlled extension to parallel + crisp drive up",
+        variant: "GHD / Roman Chair Sit-Up",
+        demoUrl: "https://www.youtube.com/results?search_query=ghd+sit+up+controlled+strict+form"
+      }
+    ],
+    far: [
+      {
+        title: "Front Plank / RKC Plank or Hollow-Body Hold",
+        cue: "Isometric anti-extension core substitute: Posterior pelvic tilt locked -> 30–45s max-tension hold",
+        variant: "RKC Plank / Hollow Hold",
+        demoUrl: "https://www.youtube.com/results?search_query=rkc+plank+hollow+body+hold+tutorial"
+      },
+      {
+        title: "Strict Hanging Leg / Toes-to-Bar Raise",
+        cue: "Hanging hip-flexor & lower-ab substitute: Dead-hang -> curl pelvis up w/ zero kip -> 4s eccentric",
+        variant: "Strict Hanging Leg Raise",
+        demoUrl: "https://www.youtube.com/results?search_query=strict+hanging+leg+raise+form"
+      },
+      {
+        title: "Ab-Wheel Rollout or Dragonflag Eccentrics",
+        cue: "High-tension lengthened anterior-core substitute -> 4s eccentric + 10–15s hold",
+        variant: "Ab-Wheel / Dragonflag",
+        demoUrl: "https://www.youtube.com/results?search_query=dragon+flag+progression+eccentric"
+      }
+    ]
   }
 };
 
@@ -3439,9 +3602,10 @@ function buildFallbackStructuredAlternatives(exName) {
       ]
     };
   }
-  if (n.includes("plank") || n.includes("hollow") || n.includes("ab wheel") || n.includes("dragonflag")) {
+  if (n.includes("plank") || n.includes("hollow") || n.includes("sit-up") || n.includes("sit up") || n.includes("ab-mat") || n.includes("ab wheel") || n.includes("dragonflag") || n.includes("crunch")) {
     return {
       near: [
+        { title: "Sit-Up (Strict / Ab-Mat / Weighted or Decline)", cue: "Dynamic anterior-core option: 8–12 reps w/ 3–4s segmental eccentric roll-down", variant: "Sit-Up (Strict / Ab-Mat / Weighted)" },
         { title: "RKC Max-Tension Front Plank or Hollow-Body Hold", cue: "Posterior pelvic tilt locked, glutes & quads squeezed -> 30–45s hold", variant: "RKC Plank / Hollow Hold" },
         { title: "Ab-Wheel / Stability-Ball Rollout", cue: "Anti-extension rollout keeping ribs down -> 3s pause at extension", variant: "Ab-Wheel / Ball Rollout" }
       ],
@@ -3509,6 +3673,8 @@ function getStructuredAlternativesForExercise(exName) {
     else if (lower.includes("jefferson curl")) entry = EXERCISE_ALTERNATIVES["Submaximal Deficit Jefferson Curl"];
     else if (lower.includes("pullover")) entry = EXERCISE_ALTERNATIVES["Straight-Arm Dumbbell / EZ-Bar Pullover (or Ab-Wheel Rollout)"];
     else if (lower.includes("ghr") || lower.includes("nordic hamstring")) entry = EXERCISE_ALTERNATIVES["Glute-Ham Raise (GHR) or Nordic Hamstring Curl"];
+    else if (lower.includes("sit-up") || lower.includes("sit up") || lower.includes("ab-mat")) entry = EXERCISE_ALTERNATIVES["Sit-Up (Strict / Ab-Mat / Weighted or Decline)"];
+    else if (lower.includes("front plank") || lower.includes("rkc plank") || lower.includes("hollow-body")) entry = EXERCISE_ALTERNATIVES["Front Plank / RKC Plank or Hollow-Body Hold"];
   }
   if (entry && !Array.isArray(entry)) {
     return {
@@ -3613,18 +3779,137 @@ function getEffectiveExerciseInfo(ex, draft) {
   };
 }
 
+const CUSTOM_TAG_PROFILES = {
+  core_ant: { zones: ["abs", "hip_flexors"], domains: ["spine_core"], s: 1.3, m: 0.9 },
+  core_lat: { zones: ["obliques", "erectors", "glute_med"], domains: ["spine_core", "left_hip_lat"], s: 1.3, m: 0.9 },
+  quads: { zones: ["quads", "glutes", "tibialis"], domains: ["knee_flex", "ankle_armor"], s: 1.4, m: 1.1 },
+  hinge: { zones: ["hamstrings", "glutes", "erectors", "adductors"], domains: ["hinge_pancake"], s: 1.4, m: 1.1 },
+  push: { zones: ["chest", "triceps", "shoulders"], domains: ["shoulder_ext"], s: 1.4, m: 1.1 },
+  pull: { zones: ["lats", "biceps", "forearms", "traps_thoracic"], domains: ["pull_cuff_grip"], s: 1.4, m: 1.0 },
+  shoulders: { zones: ["shoulders", "rotator_cuff", "traps_thoracic"], domains: ["overhead_bridge", "pull_cuff_grip"], s: 1.3, m: 1.3 },
+  arms_grip: { zones: ["biceps", "triceps", "forearms"], domains: ["pull_cuff_grip", "shoulder_ext"], s: 1.3, m: 1.0 },
+  calves: { zones: ["calves", "tibialis"], domains: ["ankle_armor"], s: 1.3, m: 1.1 },
+  mobility: { zones: ["hip_flexors", "adductors", "glute_med", "traps_thoracic"], domains: ["hip_ext_split", "hip_rot", "overhead_bridge"], s: 0.6, m: 1.6 }
+};
+
+function ensureSavedCustomSwapsShape(obj) {
+  const base = (obj && typeof obj === "object") ? obj : {};
+  if (!base.byExercise || typeof base.byExercise !== "object") base.byExercise = {};
+  if (!Array.isArray(base.recent)) base.recent = [];
+  if (!Array.isArray(base.customExercises)) base.customExercises = [];
+  if (!base.customTags || typeof base.customTags !== "object") base.customTags = {};
+  return base;
+}
+
+let __standardCatalogLowerSet = null;
+function isStandardCatalogExercise(name) {
+  const clean = cleanExerciseTitle(name).toLowerCase();
+  if (!clean) return true;
+  if (!__standardCatalogLowerSet) {
+    __standardCatalogLowerSet = new Set();
+    (MASTER_CATALOG || []).forEach(n => __standardCatalogLowerSet.add(String(n).toLowerCase()));
+    (QUICK_ADD_EXERCISES || []).forEach(it => __standardCatalogLowerSet.add(String(it.name).toLowerCase()));
+    Object.values(WORKOUT_TEMPLATES || {}).forEach(ph => {
+      Object.values((ph && ph.sessions) || {}).forEach(sess => {
+        [...(sess.warmups || []), ...(sess.exercises || [])].forEach(e => {
+          __standardCatalogLowerSet.add(String(e.name).toLowerCase());
+        });
+      });
+    });
+  }
+  return __standardCatalogLowerSet.has(clean);
+}
+
+function saveCustomExerciseToMemory(rawName, opts) {
+  const options = opts || {};
+  const clean = cleanExerciseTitle(rawName);
+  if (!clean || typeof appState === "undefined" || !appState) return;
+  const swaps = ensureSavedCustomSwapsShape(appState.savedCustomSwaps);
+  if (!isStandardCatalogExercise(clean)) {
+    swaps.customExercises = [clean, ...swaps.customExercises.filter(x => x.toLowerCase() !== clean.toLowerCase())].slice(0, 40);
+  }
+  if (options.tag && options.tag !== "auto" && CUSTOM_TAG_PROFILES[options.tag]) {
+    swaps.customTags[clean.toLowerCase()] = options.tag;
+  }
+  appState.savedCustomSwaps = swaps;
+  if (!options.skipCloudPush && typeof pushCloudSettingsToBackend === "function") {
+    pushCloudSettingsToBackend();
+  }
+}
+
+function removeSavedFreeTextExercise(name) {
+  const clean = cleanExerciseTitle(name).toLowerCase();
+  if (!clean || !appState) return;
+  const swaps = ensureSavedCustomSwapsShape(appState.savedCustomSwaps);
+  swaps.customExercises = swaps.customExercises.filter(x => x.toLowerCase() !== clean);
+  swaps.recent = swaps.recent.filter(x => x.toLowerCase() !== clean);
+  appState.savedCustomSwaps = swaps;
+  saveDraftState();
+  if (typeof pushCloudSettingsToBackend === "function") pushCloudSettingsToBackend();
+}
+
+function getSavedFreeTextExercises() {
+  if (typeof appState === "undefined" || !appState) return [];
+  const swaps = ensureSavedCustomSwapsShape(appState.savedCustomSwaps);
+  const out = [];
+  const seen = new Set();
+  [...swaps.customExercises, ...swaps.recent].forEach(item => {
+    const clean = cleanExerciseTitle(item);
+    const key = clean.toLowerCase();
+    if (!clean || seen.has(key) || isStandardCatalogExercise(clean)) return;
+    seen.add(key);
+    out.push(clean);
+  });
+  return out;
+}
+
+// Parses single or multi-exercise free-text input:
+// e.g. "Sit-Up", "Pendulum Squat 3x8", "Incline DB Press 3x10, Cable Row 4x12, Sit-Up 3x15"
+function parseQuickFreeTextLines(rawText, fallbackSets) {
+  const defaultSets = Math.max(1, Math.min(10, parseInt(fallbackSets, 10) || 3));
+  const chunks = String(rawText || "")
+    .split(/[\n,;]+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+  const results = [];
+  chunks.forEach(chunk => {
+    let name = chunk;
+    let sets = defaultSets;
+    let reps = "8";
+    // Match trailing "3x10", "3 x 8-12", "4×6/side", "3x30s"
+    const trailingScheme = name.match(/^(.*?)\s+(\d{1,2})\s*[x×]\s*(\d{1,3}(?:\s*[-–]\s*\d{1,3})?(?:\/side|\/leg|s)?)\s*$/i);
+    if (trailingScheme && trailingScheme[1].trim()) {
+      name = trailingScheme[1].trim();
+      sets = Math.max(1, Math.min(10, parseInt(trailingScheme[2], 10) || defaultSets));
+      reps = trailingScheme[3].replace(/\s+/g, "");
+    } else {
+      const trailingSetsOnly = name.match(/^(.*?)\s+(\d{1,2})\s*sets?\s*$/i);
+      if (trailingSetsOnly && trailingSetsOnly[1].trim()) {
+        name = trailingSetsOnly[1].trim();
+        sets = Math.max(1, Math.min(10, parseInt(trailingSetsOnly[2], 10) || defaultSets));
+      }
+    }
+    if (/^sit[-\s]?ups?$/i.test(name)) {
+      name = "Sit-Up (Strict / Ab-Mat / Weighted or Decline)";
+      if (!trailingScheme) reps = "10";
+    }
+    if (name) results.push({ name, sets, reps });
+  });
+  return results;
+}
+
 function saveCustomSwapToMemory(baseExName, customTitle) {
   const clean = cleanExerciseTitle(customTitle);
   if (!clean) return;
-  if (!appState.savedCustomSwaps || typeof appState.savedCustomSwaps !== "object") {
-    appState.savedCustomSwaps = { byExercise: {}, recent: [] };
+  const swaps = ensureSavedCustomSwapsShape(appState.savedCustomSwaps);
+  const perEx = swaps.byExercise[baseExName] || [];
+  swaps.byExercise[baseExName] = [clean, ...perEx.filter(x => x.toLowerCase() !== clean.toLowerCase())].slice(0, 8);
+  swaps.recent = [clean, ...swaps.recent.filter(x => x.toLowerCase() !== clean.toLowerCase())].slice(0, 20);
+  if (!isStandardCatalogExercise(clean)) {
+    swaps.customExercises = [clean, ...swaps.customExercises.filter(x => x.toLowerCase() !== clean.toLowerCase())].slice(0, 40);
   }
-  if (!appState.savedCustomSwaps.byExercise) appState.savedCustomSwaps.byExercise = {};
-  if (!Array.isArray(appState.savedCustomSwaps.recent)) appState.savedCustomSwaps.recent = [];
-
-  const perEx = appState.savedCustomSwaps.byExercise[baseExName] || [];
-  appState.savedCustomSwaps.byExercise[baseExName] = [clean, ...perEx.filter(x => x.toLowerCase() !== clean.toLowerCase())].slice(0, 8);
-  appState.savedCustomSwaps.recent = [clean, ...appState.savedCustomSwaps.recent.filter(x => x.toLowerCase() !== clean.toLowerCase())].slice(0, 15);
+  appState.savedCustomSwaps = swaps;
+  if (typeof pushCloudSettingsToBackend === "function") pushCloudSettingsToBackend();
 }
 
 // ============================================================================
@@ -3636,7 +3921,7 @@ const ANATOMICAL_ZONES = [
   { id: "chest", label: "Chest (Pecs & Ant. Capsule)", side: "front", fixEx: "Hand-Elevated Deficit Push-Up (Weighted or Archer)" },
   { id: "biceps", label: "Biceps & Distal Elbow Tendon", side: "front", fixEx: "Barbell / EZ-Bar Preacher Curl (or KB Supinated Curl)" },
   { id: "forearms", label: "Forearms, Wrists & Finger Flexors", side: "front", fixEx: "Heavy Hand Gripper / Captains of Crush (Crush Grip)" },
-  { id: "abs", label: "Anterior Core (TVA / Anti-Swayback)", side: "front", fixEx: "Front Plank / RKC Plank or Hollow-Body Hold" },
+  { id: "abs", label: "Anterior Core (TVA / Anti-Swayback)", side: "front", fixEx: "Sit-Up (Strict / Ab-Mat / Weighted or Decline)" },
   { id: "obliques", label: "Lateral Core (Obliques & QL)", side: "front", fixEx: "Strict Side Plank (Short-Lever -> Full Isometric Hold)" },
   { id: "hip_flexors", label: "Hip Flexors (Psoas & Rectus Femoris)", side: "front", fixEx: "ATG Split Squat" },
   { id: "quads", label: "Quads & Patellar Tendon", side: "front", fixEx: "ATG Squat or Weighted Pistol Squat" },
@@ -3667,49 +3952,62 @@ const MOVEMENT_DOMAINS = [
   { id: "pull_cuff_grip", label: "10. Upper Pull, Cuff ER/IR & Crush Grip", fixEx: "Weighted Pull-Up / Chin-Up" }
 ];
 
-// Maps exercise keywords to { zones: [...], domains: [...], s: strengthWeight, m: mobilityWeight }
+// Maps exercise keywords (+ user-saved custom muscle tags) to { zones: [...], domains: [...], s: strengthWeight, m: mobilityWeight }
 function classifyExerciseImpact(exName) {
-  const n = (exName || "").toLowerCase();
+  const rawClean = cleanExerciseTitle(exName);
+  const n = (rawClean || "").toLowerCase();
   const zones = new Set();
   const domains = new Set();
   let s = 1, m = 1;
 
-  if (n.includes("overhead squat") || n.includes("wall-facing overhead")) {
+  // Apply explicit user-selected muscle tag if saved for this free-text exercise
+  if (typeof appState !== "undefined" && appState && appState.savedCustomSwaps && appState.savedCustomSwaps.customTags) {
+    const tagKey = appState.savedCustomSwaps.customTags[n];
+    const prof = tagKey && CUSTOM_TAG_PROFILES[tagKey];
+    if (prof) {
+      prof.zones.forEach(z => zones.add(z));
+      prof.domains.forEach(d => domains.add(d));
+      s = prof.s;
+      m = prof.m;
+    }
+  }
+
+  if (n.includes("overhead squat") || n.includes("wall-facing overhead") || n.includes("snatch")) {
     ["quads", "glutes", "adductors", "shoulders", "traps_thoracic", "tibialis"].forEach(z => zones.add(z));
     ["knee_flex", "overhead_bridge", "ankle_armor"].forEach(d => domains.add(d));
     s = 1; m = 1.5;
   }
-  if (n.includes("atg squat") || n.includes("pistol") || n.includes("back squat") || n.includes("front squat") || n.includes("cyclist squat") || n.includes("pendulum") || n.includes("hack squat") || n.includes("leg press")) {
+  if (n.includes("atg squat") || n.includes("pistol") || n.includes("back squat") || n.includes("front squat") || n.includes("cyclist squat") || n.includes("goblet") || n.includes("belt squat") || n.includes("zercher") || n.includes("pendulum") || n.includes("hack squat") || n.includes("leg press") || (n.includes("squat") && !n.includes("split") && !n.includes("cossack") && !n.includes("sissy") && !n.includes("spanish"))) {
     ["quads", "glutes", "glute_med", "adductors", "tibialis"].forEach(z => zones.add(z));
     ["knee_flex", "ankle_armor"].forEach(d => domains.add(d));
-    s = 1.5; m = (n.includes("back squat") || n.includes("leg press")) ? 0.8 : 1.2;
+    s = 1.5; m = (n.includes("back squat") || n.includes("leg press") || n.includes("belt squat")) ? 0.8 : 1.2;
   }
-  if (n.includes("dragon squat") || n.includes("curtsy") || n.includes("crossover")) {
+  if (n.includes("dragon squat") || n.includes("curtsy") || n.includes("crossover") || n.includes("skater")) {
     ["quads", "glute_med", "glutes", "tibialis"].forEach(z => zones.add(z));
     ["knee_flex", "hip_rot", "left_hip_lat"].forEach(d => domains.add(d));
     s = 1.2; m = 1.5;
   }
-  if (n.includes("sissy") || n.includes("reverse nordic") || n.includes("saddle pose") || n.includes("leg extension") || n.includes("spanish squat") || n.includes("wall sit")) {
+  if (n.includes("sissy") || n.includes("reverse nordic") || n.includes("saddle pose") || n.includes("leg extension") || n.includes("spanish squat") || n.includes("wall sit") || n.includes("sled") || n.includes("backward walk")) {
     ["quads", "hip_flexors"].forEach(z => zones.add(z));
     ["knee_flex", "hip_ext_split"].forEach(d => domains.add(d));
-    s = n.includes("saddle") ? 0.3 : 1.3; m = n.includes("leg extension") ? 0.9 : 1.4;
+    s = n.includes("saddle") ? 0.3 : 1.3; m = (n.includes("leg extension") || n.includes("sled")) ? 0.9 : 1.4;
   }
   if (n.includes("ghr") || n.includes("glute-ham") || n.includes("nordic") || n.includes("hamstring curl") || n.includes("leg curl") || n.includes("slider") || n.includes("bridge curl")) {
     ["hamstrings", "glutes", "calves"].forEach(z => zones.add(z));
     ["hinge_pancake"].forEach(d => domains.add(d));
     s = 1.5; m = 0.8;
   }
-  if (n.includes("hip thrust") || n.includes("glute bridge")) {
+  if (n.includes("hip thrust") || n.includes("glute bridge") || n.includes("kickback") || n.includes("kb swing") || n.includes("kettlebell swing") || n.includes("pull-through")) {
     ["glutes", "hamstrings"].forEach(z => zones.add(z));
     ["hinge_pancake", "hip_ext_split"].forEach(d => domains.add(d));
     s = 1.4; m = 0.7;
   }
-  if (n.includes("split squat") || n.includes("lunge") || n.includes("couch stretch") || n.includes("front split") || n.includes("scorpion") || n.includes("psoas")) {
+  if (n.includes("split squat") || n.includes("bulgarian") || n.includes("lunge") || n.includes("couch stretch") || n.includes("front split") || n.includes("scorpion") || n.includes("psoas")) {
     ["hip_flexors", "quads", "glutes", "hamstrings"].forEach(z => zones.add(z));
     ["hip_ext_split", "knee_flex"].forEach(d => domains.add(d));
     s = n.includes("stretch") ? 0.5 : 1.2; m = 1.5;
   }
-  if (n.includes("rdl") || n.includes("romanian") || n.includes("good morning") || n.includes("deadlift") || n.includes("pancake") || n.includes("straddle") || n.includes("pike leg")) {
+  if (n.includes("rdl") || n.includes("romanian") || n.includes("good morning") || n.includes("deadlift") || n.includes("pancake") || n.includes("straddle") || n.includes("pike leg") || n.includes("clean") || n.includes("hinge")) {
     ["hamstrings", "glutes", "adductors", "erectors"].forEach(z => zones.add(z));
     ["hinge_pancake"].forEach(d => domains.add(d));
     if (n.includes("b-stance") || n.includes("single-leg") || n.includes("airplane")) {
@@ -3727,65 +4025,65 @@ function classifyExerciseImpact(exName) {
     ["left_hip_lat", "hip_rot", "hinge_pancake"].forEach(d => domains.add(d));
     s = n.includes("frog") ? 0.5 : 1.2; m = 1.4;
   }
-  if (n.includes("abduction") || n.includes("abductor") || n.includes("monster walk") || n.includes("step-up") || n.includes("step-down")) {
+  if (n.includes("abduction") || n.includes("abductor") || n.includes("monster walk") || n.includes("clamshell") || n.includes("step-up") || n.includes("step up") || n.includes("step-down") || n.includes("step down")) {
     ["glute_med", "glutes", "quads"].forEach(z => zones.add(z));
     ["left_hip_lat", "knee_flex"].forEach(d => domains.add(d));
     s = 1.3; m = 1.0;
   }
-  if (n.includes("side plank") || n.includes("suitcase carry") || n.includes("pallof") || n.includes("landmine") || n.includes("side bend") || n.includes("ql ")) {
+  if (n.includes("side plank") || n.includes("suitcase carry") || n.includes("pallof") || n.includes("landmine") || n.includes("side bend") || n.includes("ql ") || n.includes("russian twist") || n.includes("woodchop") || n.includes("cable chop") || n.includes("torso rotation") || n.includes("turkish") || n.includes("get-up") || n.includes("windmill")) {
     ["obliques", "glute_med", "abs"].forEach(z => zones.add(z));
     ["left_hip_lat", "spine_core"].forEach(d => domains.add(d));
-    s = 1.2; m = 0.7;
+    s = 1.2; m = 0.8;
   }
   if (n.includes("90/90") || n.includes("pigeon") || n.includes("figure-4") || n.includes("internal rotation lift") || n.includes("hip internal rotation")) {
     ["glute_med", "glutes", "adductors"].forEach(z => zones.add(z));
     ["hip_rot", "left_hip_lat"].forEach(d => domains.add(d));
     s = 0.8; m = 1.6;
   }
-  if (n.includes("back extension") || n.includes("sørensen") || n.includes("reverse hyper") || n.includes("floaty") || n.includes("jefferson") || n.includes("roll-down") || n.includes("cat-cow")) {
+  if (n.includes("back extension") || n.includes("hyperextension") || n.includes("sørensen") || n.includes("sorensen") || n.includes("reverse hyper") || n.includes("floaty") || n.includes("jefferson") || n.includes("roll-down") || n.includes("cat-cow") || n.includes("superman")) {
     ["erectors", "glutes", "hamstrings"].forEach(z => zones.add(z));
     ["spine_core", "hinge_pancake"].forEach(d => domains.add(d));
     s = n.includes("jefferson") ? 0.7 : 1.4; m = n.includes("jefferson") ? 1.6 : 1.0;
   }
-  if (n.includes("calf") || n.includes("soleus") || n.includes("tibialis") || n.includes("tib bar") || n.includes("dorsiflexion") || n.includes("pogo") || n.includes("run")) {
+  if (n.includes("calf") || n.includes("calves") || n.includes("soleus") || n.includes("tibialis") || n.includes("tib bar") || n.includes("dorsiflexion") || n.includes("pogo") || n.includes("jump rope") || n.includes("run") || n.includes("hike")) {
     ["calves", "tibialis"].forEach(z => zones.add(z));
     ["ankle_armor"].forEach(d => domains.add(d));
     s = 1.2; m = 1.1;
   }
-  if (n.includes("pull-up") || n.includes("chin-up") || n.includes("pulldown") || n.includes("row") || n.includes("front lever") || n.includes("muscle-up")) {
+  if (n.includes("pull-up") || n.includes("pull up") || n.includes("pullup") || n.includes("chin-up") || n.includes("chin up") || n.includes("chinup") || n.includes("pulldown") || n.includes("row") || n.includes("front lever") || n.includes("muscle-up") || n.includes("muscle up") || n.includes("climb") || n.includes("boulder") || n.includes("skierg") || n.includes("ski erg")) {
     ["lats", "biceps", "forearms", "traps_thoracic"].forEach(z => zones.add(z));
     ["pull_cuff_grip", "overhead_bridge"].forEach(d => domains.add(d));
     s = 1.5; m = 1.0;
   }
-  if (n.includes("dip") || n.includes("push-up") || n.includes("bench press") || n.includes("chest press") || n.includes("chest fly") || n.includes("pec-deck") || n.includes("pec deck") || n.includes("triceps")) {
+  if (n.includes("dip") || n.includes("push-up") || n.includes("push up") || n.includes("pushup") || n.includes("bench") || n.includes("chest press") || n.includes("chest fly") || n.includes("cable fly") || n.includes("pec-deck") || n.includes("pec deck") || n.includes("pec ") || n.includes("tricep") || n.includes("pushdown") || n.includes("pressdown") || n.includes("skullcrusher") || n.includes("jm press") || n.includes("planche") || n.includes("burpee")) {
     ["chest", "triceps", "shoulders"].forEach(z => zones.add(z));
     ["shoulder_ext"].forEach(d => domains.add(d));
-    s = 1.4; m = n.includes("barbell flat bench") ? 0.6 : 1.3;
+    s = 1.4; m = n.includes("barbell flat bench") ? 0.6 : 1.2;
   }
-  if (n.includes("skin-the-cat") || n.includes("german hang") || n.includes("tabletop") || n.includes("back lever") || n.includes("preacher") || n.includes("incline db") || n.includes("incline dumbbell") || n.includes("bayesian") || n.includes("pelican") || n.includes("curl")) {
+  if (n.includes("skin-the-cat") || n.includes("german hang") || n.includes("tabletop") || n.includes("back lever") || n.includes("preacher") || n.includes("incline db") || n.includes("incline dumbbell") || n.includes("bayesian") || n.includes("pelican") || n.includes("bicep") || (n.includes("curl") && !n.includes("nordic") && !n.includes("hamstring") && !n.includes("leg curl") && !n.includes("jefferson") && !n.includes("wrist") && !n.includes("finger"))) {
     ["biceps", "shoulders", "chest", "lats"].forEach(z => zones.add(z));
     ["shoulder_ext", "pull_cuff_grip"].forEach(d => domains.add(d));
-    s = 1.2; m = 1.5;
+    s = 1.2; m = 1.4;
   }
-  if (n.includes("pike push") || n.includes("overhead press") || n.includes("shoulder press") || n.includes("lateral raise") || n.includes("handstand") || n.includes("hspu") || n.includes("z-press") || n.includes("trap-3") || n.includes("y-raise") || n.includes("bridge") || n.includes("thoracic") || n.includes("pullover") || n.includes("lat prayer")) {
+  if (n.includes("pike push") || n.includes("overhead press") || n.includes("shoulder press") || n.includes("arnold press") || n.includes("military press") || n.includes("ohp") || n.includes("lateral raise") || n.includes("upright row") || n.includes("shrug") || n.includes("handstand") || n.includes("hspu") || n.includes("z-press") || n.includes("trap-3") || n.includes("y-raise") || n.includes("bridge") || n.includes("thoracic") || n.includes("pullover") || n.includes("lat prayer")) {
     ["shoulders", "traps_thoracic", "triceps", "lats"].forEach(z => zones.add(z));
     ["overhead_bridge"].forEach(d => domains.add(d));
     s = 1.3; m = 1.4;
   }
-  if (n.includes("external rotation") || n.includes("internal rotation") || n.includes("face pull") || n.includes("rear delt") || n.includes("halo")) {
+  if (n.includes("external rotation") || n.includes("internal rotation") || n.includes("face pull") || n.includes("rear delt") || n.includes("reverse fly") || n.includes("pull-apart") || n.includes("halo") || n.includes("rotator")) {
     ["rotator_cuff", "shoulders"].forEach(z => zones.add(z));
     ["pull_cuff_grip", "shoulder_ext"].forEach(d => domains.add(d));
     s = 1.1; m = 1.3;
   }
-  if (n.includes("gripper") || n.includes("finger") || n.includes("pinch") || n.includes("farmer") || n.includes("dead-hang") || n.includes("rope")) {
+  if (n.includes("gripper") || n.includes("finger") || n.includes("pinch") || n.includes("farmer") || n.includes("dead-hang") || n.includes("dead hang") || n.includes("wrist") || n.includes("forearm") || n.includes("hangboard") || n.includes("rope")) {
     ["forearms"].forEach(z => zones.add(z));
     ["pull_cuff_grip"].forEach(d => domains.add(d));
     s = 1.4; m = 0.8;
   }
-  if (n.includes("front plank") || n.includes("rkc") || n.includes("hollow") || n.includes("dragonflag") || n.includes("ab wheel") || n.includes("ab-wheel") || n.includes("rollout") || n.includes("leg raise") || n.includes("dead-bug") || n.includes("crunch")) {
+  if (n.includes("sit-up") || n.includes("sit up") || n.includes("situp") || n.includes("ab-mat") || n.includes("ab mat") || n.includes("v-up") || n.includes("l-sit") || n.includes("toes-to-bar") || n.includes("toes to bar") || n.includes("front plank") || (n.includes("plank") && !n.includes("side") && !n.includes("copenhagen")) || n.includes("rkc") || n.includes("hollow") || n.includes("dragonflag") || n.includes("dragon flag") || n.includes("ab wheel") || n.includes("ab-wheel") || n.includes("rollout") || n.includes("leg raise") || n.includes("knee raise") || n.includes("dead-bug") || n.includes("dead bug") || n.includes("crunch") || n.includes("abs")) {
     ["abs", "obliques", "hip_flexors"].forEach(z => zones.add(z));
     ["spine_core"].forEach(d => domains.add(d));
-    s = 1.3; m = 0.7;
+    s = 1.3; m = (n.includes("sit-up") || n.includes("sit up") || n.includes("ab-mat")) ? 1.0 : 0.7;
   }
 
   return { zones: Array.from(zones), domains: Array.from(domains), s, m };
@@ -4186,7 +4484,8 @@ const SHEET_EXERCISE_NAME_MAP = {
   "Skill Sweep Part 1: Concept2 Row 3 km (2 km Easy + 4 x 10–15 Strokes @ 30–32 spm)": "Concept2 Row 3 km (2 km Easy + 4x10–15 Strokes @ 30–32 spm)",
   "Skill Sweep Part 2: 20-Min Calisthenics Skill Rotation (2–3 Skills x 2–3 Sets @ RPE <= 7)": "Weekly Calisthenics Skill Rotation (20 min @ RPE <= 7)",
   "Skill Sweep Part 3: 50 Chest-to-Floor Burpees (5 x 10 Steady Rhythm)": "50 Chest-to-Floor Burpees (Smooth Rhythm / Benchmark)",
-  "Wall Straddle & 90° Frog PNF Contract-Relax": "Loaded Seated Butterfly (ATG Hip #2 'Knees to Floor') or Wall Straddle & 90° Frog PNF"
+  "Wall Straddle & 90° Frog PNF Contract-Relax": "Loaded Seated Butterfly (ATG Hip #2 'Knees to Floor') or Wall Straddle & 90° Frog PNF",
+  "Sit up": "Sit-Up (Strict / Ab-Mat / Weighted or Decline)"
 };
 
 const FROM_SHEET_EXERCISE_NAME_MAP = {
@@ -4199,16 +4498,21 @@ const FROM_SHEET_EXERCISE_NAME_MAP = {
   "ATG Split Squat (Superset B)": "ATG Split Squat",
   "Standing Straight-Legged Hip Abduction (Band or Cable) (Superset A)": "Standing Straight-Legged Hip Abduction (Band or Cable)",
   "Single-Leg Deficit Calf Raise + Wall Tibialis Raise Superset": "Single-Leg Deficit Calf Raise + Bent-Knee Soleus <-> Wall Tibialis Raise",
-  "3-Angle Deficit Jefferson Curl (Set 1: Center, Set 2: 45 deg Left, Set 3: 45 deg Right)": "3-Angle Deficit Jefferson Curl (Center; 45° Rotated Unloaded/Removed)"
+  "3-Angle Deficit Jefferson Curl (Set 1: Center, Set 2: 45 deg Left, Set 3: 45 deg Right)": "3-Angle Deficit Jefferson Curl (Center; 45° Rotated Unloaded/Removed)",
+  "Sit up": "Sit-Up (Strict / Ab-Mat / Weighted or Decline)",
+  "Sit-up": "Sit-Up (Strict / Ab-Mat / Weighted or Decline)",
+  "Sit Up": "Sit-Up (Strict / Ab-Mat / Weighted or Decline)"
 };
 
 function toSheetExerciseName(exName) {
   const clean = String(exName || "").trim();
+  if (/^sit[-\s]?ups?$/i.test(clean)) return "Sit-Up (Strict / Ab-Mat / Weighted or Decline)";
   return SHEET_EXERCISE_NAME_MAP[clean] || clean;
 }
 
 function fromSheetExerciseName(sheetExName) {
   const clean = String(sheetExName || "").trim();
+  if (/^sit[-\s]?ups?$/i.test(clean)) return "Sit-Up (Strict / Ab-Mat / Weighted or Decline)";
   return FROM_SHEET_EXERCISE_NAME_MAP[clean] || clean;
 }
 
@@ -6381,6 +6685,7 @@ const DEFAULT_STATE = {
   focusMode: true,
   soundEnabled: true,
   showWarmups: false,
+  showCustomBuilder: false,
   gasUrl: DEFAULT_SYNC_URL,
   syncKey: "",
   stravaAuto: false,
@@ -6396,7 +6701,7 @@ const DEFAULT_STATE = {
   stravaSyncedWorkouts: {},
   loggedWorkoutsByKey: {},
   pendingStravaUploads: {},
-  savedCustomSwaps: { byExercise: {}, recent: [] },
+  savedCustomSwaps: { byExercise: {}, recent: [], customExercises: [], customTags: {} },
   workoutStartedAtMs: 0,
   workoutStartClockStr: "",
   lastFinishedDurationSec: 0,
@@ -6422,6 +6727,7 @@ function loadState() {
     parsed.defaultFeel = normalizeFeelForSheet(parsed.defaultFeel);
     if (typeof parsed.focusMode === "undefined") parsed.focusMode = true;
     if (typeof parsed.soundEnabled === "undefined") parsed.soundEnabled = true;
+    if (typeof parsed.showCustomBuilder === "undefined") parsed.showCustomBuilder = false;
     if (!parsed.location) parsed.location = "full_gym";
     if (typeof parsed.syncKey !== "string") parsed.syncKey = "";
     if (!parsed.gasUrl || parsed.gasUrl.includes(".lhr.life") || parsed.gasUrl.includes("trycloudflare.com") || !parsed.syncKey) {
@@ -6433,9 +6739,7 @@ function loadState() {
     if (!parsed.stravaSyncedWorkouts || typeof parsed.stravaSyncedWorkouts !== "object") parsed.stravaSyncedWorkouts = {};
     if (!parsed.loggedWorkoutsByKey || typeof parsed.loggedWorkoutsByKey !== "object") parsed.loggedWorkoutsByKey = {};
     if (!parsed.pendingStravaUploads || typeof parsed.pendingStravaUploads !== "object") parsed.pendingStravaUploads = {};
-    if (!parsed.savedCustomSwaps || typeof parsed.savedCustomSwaps !== "object") {
-      parsed.savedCustomSwaps = { byExercise: {}, recent: [] };
-    }
+    parsed.savedCustomSwaps = ensureSavedCustomSwapsShape(parsed.savedCustomSwaps);
 
     // Merge seeded per-set history with any newer local per-set history
     const mergedSets = JSON.parse(JSON.stringify(SEEDED_LAST_SETS));
@@ -6750,31 +7054,33 @@ function computeRecommendation() {
   const nextUpper = getNextUpper1aVariant(appState.history);
   const baseRot = appState.phase === "1a"
     ? ["lower_1a", nextUpper, "long_run", "skill_sweep", "mobility"]
-    : phaseObj.rotationOrder.slice();
+    : phaseObj.rotationOrder.filter(sid => sid !== "quick_fullbody" && sid !== "custom_workout");
   const sessions = phaseObj.sessions;
 
   const workoutEntries = appState.history.filter(h => h.type === "workout" && h.sessionId);
-  const lastWorkout = workoutEntries.length > 0 ? workoutEntries[workoutEntries.length - 1] : null;
+  const adHocIds = new Set(["custom_workout", "quick_fullbody", "outdoor_combo", "home_catchup"]);
+  const lastRotWorkout = [...workoutEntries].reverse().find(h => !adHocIds.has(h.sessionId)) || (workoutEntries.length > 0 ? workoutEntries[workoutEntries.length - 1] : null);
 
   const recentHighLegActivity = appState.history.slice(-3).reverse().find(h =>
-    h.type === "activity" && (h.legImpact === "high" || h.legImpact === "moderate")
+    (h.type === "activity" || (h.type === "workout" && adHocIds.has(h.sessionId))) &&
+    (h.legImpact === "high" || h.legImpact === "moderate")
   );
 
   let nextSessionId = baseRot[0];
   let altSessionId = null;
   let reason = "Following your ordered weekday rotation.";
 
-  if (lastWorkout) {
-    let idx = baseRot.indexOf(lastWorkout.sessionId);
+  if (lastRotWorkout) {
+    let idx = baseRot.indexOf(lastRotWorkout.sessionId);
     // Both Upper A and Upper B occupy Slot 2 (index 1) in Phase 1a rotation!
     if (idx === -1 && appState.phase === "1a" &&
-        (lastWorkout.sessionId === "upper_1a_a" || lastWorkout.sessionId === "upper_1a_b" || lastWorkout.sessionId === "upper_1a")) {
+        (lastRotWorkout.sessionId === "upper_1a_a" || lastRotWorkout.sessionId === "upper_1a_b" || lastRotWorkout.sessionId === "upper_1a")) {
       idx = 1;
     }
     if (idx !== -1) {
       nextSessionId = baseRot[(idx + 1) % baseRot.length];
-      const lastLabel = sessions[lastWorkout.sessionId]?.name || lastWorkout.title;
-      reason = `Last logged workout was "${lastLabel}" (${lastWorkout.date}). Next in rotation is ${sessions[nextSessionId]?.name}. (Upper alternates A ↔ B across cycles — next Upper is ${nextUpper === "upper_1a_b" ? "Upper B" : "Upper A"}).`;
+      const lastLabel = sessions[lastRotWorkout.sessionId]?.name || lastRotWorkout.title;
+      reason = `Last rotation workout was "${lastLabel}" (${lastRotWorkout.date}). Next in rotation is ${sessions[nextSessionId]?.name}. (Upper alternates A ↔ B across cycles — next Upper is ${nextUpper === "upper_1a_b" ? "Upper B" : "Upper A"}).`;
     }
   }
 
@@ -6823,6 +7129,14 @@ function renderRecommendationAndRotation() {
   qfbBtn.textContent = "⚡ Quick 30–40m Full-Body (Supersets)";
   qfbBtn.onclick = () => selectSession("quick_fullbody");
   btnContainer.appendChild(qfbBtn);
+
+  const customBtn = document.createElement("button");
+  customBtn.className = "btn btn-outline btn-sm";
+  customBtn.style.borderColor = "rgba(168,85,247,0.6)";
+  customBtn.style.color = "#e9d5ff";
+  customBtn.textContent = "✏️ Custom Free-Text Workout";
+  customBtn.onclick = () => openCustomWorkoutSession();
+  btnContainer.appendChild(customBtn);
 
   const swapBtn = document.getElementById("upperVariantSwapBtn");
   if (swapBtn) {
@@ -7049,6 +7363,7 @@ function renderLocationBanner() {
       <div style="margin-bottom:6px;">Exercises below show automatic Home Gym substitutions (Sots/Z-Press, Bench Step-Down, Barbell/Plate/Band loads, Close-Grip Bench/Deficit Push-Up, Captains of Crush, Stationary Bike).</div>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
         <button class="btn btn-primary btn-xs" onclick="selectSession('home_catchup')">🏠 Open 15-Min Home Catch-Up (Barbell RDL + GHR + Sørensen)</button>
+        <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.55); color:#d8b4fe;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout</button>
       </div>
     `;
   } else if (appState.location === "outdoor_gym") {
@@ -7061,6 +7376,7 @@ function renderLocationBanner() {
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
         <button class="btn btn-success btn-xs" onclick="selectSession('outdoor_combo')">🌳 Load Outdoor Full-Body Combo (Upper + BW Lower)</button>
         <button class="btn btn-outline btn-xs" onclick="selectSession('home_catchup')">🏠 View 15-Min Home Catch-Up List</button>
+        <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.55); color:#d8b4fe;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout</button>
       </div>
     `;
   } else {
@@ -7072,6 +7388,7 @@ function renderLocationBanner() {
       <div style="margin-bottom:6px;">Automatically upgrades exercises to use equipment you don't have at Home/Outdoors: <b>Deep DB Bench Press</b>, <b>Seated Deep DB Shoulder Press</b>, <b>Incline DB Stretch Curl</b>, <b>DB Pullover</b>, <b>DB Trap-3 Y-Raise</b>, <b>Heavy DB ATG Split/Cossack Squat</b> & <b>45° Roman Chair Back Extension</b>. Missing equipment (like no GHR)? Tap <b>⇄ Alt</b> on any card!</div>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
         <button class="btn btn-amber btn-xs" onclick="selectSession('quick_fullbody')">⚡ Open 30–40m Quick & Dirty Full-Body (All Supersets)</button>
+        <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.65); color:#e9d5ff;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout (+ Gap Analysis)</button>
       </div>
     `;
   }
@@ -8067,6 +8384,267 @@ function renderExerciseCard(ex, draft, isWarmup, isCustom, customIdx, orderIdx, 
   return card;
 }
 
+function openCustomWorkoutSession() {
+  appState.showCustomBuilder = true;
+  selectSession("custom_workout");
+  setTimeout(() => {
+    const inp = document.getElementById("qbFreeTextInput");
+    if (inp) inp.focus();
+  }, 60);
+}
+
+function toggleCustomBuilderPanel() {
+  if (appState.sessionId === "custom_workout") {
+    const inp = document.getElementById("qbFreeTextInput");
+    if (inp) inp.focus();
+    return;
+  }
+  appState.showCustomBuilder = !appState.showCustomBuilder;
+  saveDraftState();
+  renderExercises();
+}
+
+function computeWorkoutAndRecentGapAnalysis(sessionObj, draft) {
+  const orderedMain = getOrderedSessionExercises(sessionObj, draft);
+  const allCurrent = [...(sessionObj.warmups || []), ...orderedMain];
+
+  const sessionPillars = [
+    { id: "quads", label: "Quads / Knee Flex", zones: ["quads"], fixEx: "ATG Squat or Weighted Pistol Squat", fixShort: "ATG Squat" },
+    { id: "hinge", label: "Hinge / Hamstrings", zones: ["hamstrings", "glutes"], fixEx: "Wide-Stance Deficit RDL or Seated Pancake Good Morning", fixShort: "Deficit RDL / GM" },
+    { id: "push", label: "Upper Push", zones: ["chest", "triceps", "shoulders"], fixEx: "Hand-Elevated Deficit Push-Up (Weighted or Archer)", fixShort: "Deficit Push-Up / DB Bench" },
+    { id: "pull", label: "Upper Pull", zones: ["lats", "biceps", "rotator_cuff"], fixEx: "Weighted Pull-Up / Chin-Up", fixShort: "Pull-Up / Row" },
+    { id: "core_ant", label: "Anterior Core", zones: ["abs"], fixEx: "Sit-Up (Strict / Ab-Mat / Weighted or Decline)", fixShort: "Sit-Up" },
+    { id: "core_post_lat", label: "Spine / Lateral Core", zones: ["erectors", "obliques", "glute_med"], fixEx: "Back Extension + Isometric Sørensen Hold (Roman Chair / Prone Arch)", fixShort: "Back Ext / Side Plank" },
+    { id: "ankles", label: "Calves & Tibialis", zones: ["calves", "tibialis"], fixEx: "Single-Leg Deficit Calf Raise + Bent-Knee Soleus <-> Wall Tibialis Raise", fixShort: "Calf <-> Tibialis" }
+  ];
+
+  const sessionZonesHit = new Set();
+  allCurrent.forEach(ex => {
+    const arr = draft.setsData[ex.name] || [];
+    const doneCount = arr.filter(s => s && s.done).length;
+    if (doneCount === 0 && draft.skippedToday && draft.skippedToday[ex.name]) return;
+    const eff = getEffectiveExerciseInfo(ex, draft);
+    let imp = classifyExerciseImpact(eff.cleanTitle);
+    if (imp.zones.length === 0) imp = classifyExerciseImpact(ex.name);
+    imp.zones.forEach(z => sessionZonesHit.add(z));
+  });
+
+  const coveredPillars = sessionPillars.filter(p => p.zones.some(z => sessionZonesHit.has(z)));
+  const missingPillars = sessionPillars.filter(p => !p.zones.some(z => sessionZonesHit.has(z)));
+
+  // Compute 7-day rolling zone coverage (plus today's active workout) to surface neglected areas
+  const baseDate = new Date((appState.workoutDate || getTodayIso()) + "T12:00:00");
+  baseDate.setDate(baseDate.getDate() - 7);
+  const cutoff7 = `${baseDate.getFullYear()}-${String(baseDate.getMonth() + 1).padStart(2, "0")}-${String(baseDate.getDate()).padStart(2, "0")}`;
+
+  const recent7Zones = {};
+  ANATOMICAL_ZONES.forEach(z => { recent7Zones[z.id] = 0; });
+  sessionZonesHit.forEach(zid => {
+    if (typeof recent7Zones[zid] === "number") recent7Zones[zid] += 2;
+  });
+  Object.keys(appState.lastByExercise || {}).forEach(exName => {
+    const perf = appState.lastByExercise[exName];
+    if (perf && perf.date >= cutoff7) {
+      const setsArr = appState.lastSetsByExercise && appState.lastSetsByExercise[exName] && appState.lastSetsByExercise[exName].sets;
+      const cnt = Array.isArray(setsArr) && setsArr.length > 0 ? setsArr.length : 2;
+      classifyExerciseImpact(exName).zones.forEach(z => {
+        if (typeof recent7Zones[z] === "number") recent7Zones[z] += cnt;
+      });
+    }
+  });
+  (appState.history || []).forEach(h => {
+    if (h && h.date >= cutoff7 && h.type === "activity") {
+      classifyExerciseImpact(h.title).zones.forEach(z => {
+        if (typeof recent7Zones[z] === "number") recent7Zones[z] += 2;
+      });
+    }
+  });
+
+  const neglected7d = ANATOMICAL_ZONES.filter(z => (recent7Zones[z.id] || 0) === 0);
+
+  return { coveredPillars, missingPillars, neglected7d, totalExercises: allCurrent.length };
+}
+
+function updateQuickBuilderPreview() {
+  const inp = document.getElementById("qbFreeTextInput");
+  const tagEl = document.getElementById("qbTagSelect");
+  const prevEl = document.getElementById("qbDetectPreview");
+  if (!inp || !prevEl) return;
+  const raw = (inp.value || "").trim();
+  if (!raw) {
+    prevEl.innerHTML = `💡 Type one exercise (e.g. <code>Sit-Up</code> or <code>Cable Row 3x10</code>) or paste a whole comma/line list (e.g. <code>Incline DB Bench 3x8, Lat Pulldown 3x10, Sit-Up 3x12</code>).`;
+    return;
+  }
+  const items = parseQuickFreeTextLines(raw, parseInt(document.getElementById("qbSetsSelect")?.value || "3", 10) || 3);
+  const explicitTag = tagEl ? tagEl.value : "auto";
+  const badges = items.map(it => {
+    let zones = classifyExerciseImpact(it.name).zones;
+    if (explicitTag && explicitTag !== "auto" && CUSTOM_TAG_PROFILES[explicitTag]) {
+      const merged = new Set([...zones, ...CUSTOM_TAG_PROFILES[explicitTag].zones]);
+      zones = Array.from(merged);
+    }
+    const zText = zones.length > 0 ? zones.slice(0, 3).join(", ") : "unclassified — pick muscle focus if desired";
+    return `<b>${escapeHtml(it.name)}</b> (${it.sets}×${escapeHtml(it.reps)} → <i>${escapeHtml(zText)}</i>)`;
+  });
+  prevEl.innerHTML = `🎯 Ready to add ${items.length} exercise${items.length > 1 ? "s" : ""}: ${badges.join(" • ")}`;
+}
+
+function addFromQuickBuilderInput() {
+  const inp = document.getElementById("qbFreeTextInput");
+  const setsSel = document.getElementById("qbSetsSelect");
+  const tagSel = document.getElementById("qbTagSelect");
+  if (!inp) return;
+  const raw = (inp.value || "").trim();
+  if (!raw) {
+    inp.focus();
+    return;
+  }
+  const fallbackSets = parseInt(setsSel ? setsSel.value : "3", 10) || 3;
+  const tagVal = tagSel ? tagSel.value : "auto";
+  const items = parseQuickFreeTextLines(raw, fallbackSets);
+  if (items.length === 0) return;
+
+  items.forEach(it => {
+    saveCustomExerciseToMemory(it.name, { tag: tagVal });
+    addExerciseToSession(it.name, it.sets, it.reps, "", "Custom free-text exercise", "bottom");
+  });
+  inp.value = "";
+  if (tagSel) tagSel.value = "auto";
+  renderExercises();
+  renderBodyCoverageMap();
+}
+
+function renderCustomWorkoutBuilder(sessionObj, draft) {
+  const container = document.getElementById("customBuilderContainer");
+  const toggleBtn = document.getElementById("toggleCustomBuilderBtn");
+  const isCustomSession = sessionObj && sessionObj.id === "custom_workout";
+  const isOpen = isCustomSession || !!appState.showCustomBuilder;
+
+  if (toggleBtn) {
+    toggleBtn.textContent = isCustomSession
+      ? "✏️ Custom Builder Active"
+      : (isOpen ? "✏️ Hide Free-Text & Gaps" : "✏️ Free-Text & Gaps");
+    toggleBtn.style.borderColor = isOpen ? "rgba(168,85,247,0.8)" : "rgba(168,85,247,0.45)";
+  }
+  if (!container) return;
+  if (!isOpen) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const savedFreeText = getSavedFreeTextExercises();
+  const gap = computeWorkoutAndRecentGapAnalysis(sessionObj, draft);
+
+  const savedChipsHtml = savedFreeText.length > 0
+    ? savedFreeText.map(name => {
+        const perf = appState.lastByExercise && appState.lastByExercise[name];
+        const hint = perf ? ` (${perf.load !== "" ? perf.load : "bw"}×${perf.reps})` : "";
+        const safeJs = name.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        const prevSets = appState.lastSetsByExercise && appState.lastSetsByExercise[name];
+        const sCnt = (prevSets && Array.isArray(prevSets.sets) && prevSets.sets.length > 0) ? prevSets.sets.length : 3;
+        return `<span class="saved-ft-chip">
+          <span onclick="addExerciseToSession('${safeJs}', ${sCnt}, '8', '', 'Saved free-text exercise')">+ ${escapeHtml(name)}${escapeHtml(hint)}</span>
+          <span class="saved-ft-del" title="Remove saved chip" onclick="event.stopPropagation(); removeSavedFreeTextExercise('${safeJs}'); renderExercises();">×</span>
+        </span>`;
+      }).join("")
+    : `<span style="font-size:11px; color:var(--muted);">Any free-text exercise you type auto-saves here (with previous load×reps memory &amp; Sheet sync).</span>`;
+
+  const quickStaples = [
+    { label: "Sit-Up", name: "Sit-Up (Strict / Ab-Mat / Weighted or Decline)", sets: 3, reps: "10", hold: "" },
+    { label: "Pull-Up / Chin-Up", name: "Weighted Pull-Up / Chin-Up", sets: 3, reps: "5", hold: "20" },
+    { label: "Deep Dip / Bench", name: "Hand-Elevated Deficit Push-Up (Weighted or Archer)", sets: 3, reps: "8", hold: "20" },
+    { label: "ATG Squat", name: "ATG Squat or Weighted Pistol Squat", sets: 3, reps: "5", hold: "20" },
+    { label: "Deficit RDL / GM", name: "Wide-Stance Deficit RDL or Seated Pancake Good Morning", sets: 3, reps: "8", hold: "20" },
+    { label: "Back Ext + Hold", name: "Back Extension + Isometric Sørensen Hold (Roman Chair / Prone Arch)", sets: 2, reps: "4 + 40s hold", hold: "40" }
+  ];
+  const stapleChipsHtml = quickStaples.map(st => {
+    const safeJs = st.name.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    return `<button class="chip" onclick="addExerciseToSession('${safeJs}', ${st.sets}, '${st.reps}', '${st.hold}', 'Quick-added staple')">+ ${escapeHtml(st.label)}</button>`;
+  }).join("");
+
+  const coveredPillsHtml = gap.coveredPillars.map(p =>
+    `<span class="gap-pill covered">✓ ${escapeHtml(p.label)}</span>`
+  ).join("");
+
+  const missingPillsHtml = gap.missingPillars.map(p => {
+    const safeFix = p.fixEx.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    const fixReps = p.fixEx.includes("Sit-Up") ? "10" : "6";
+    const fixHold = p.fixEx.includes("Sit-Up") ? "" : "20";
+    return `<button class="gap-pill missing" style="cursor:pointer;" title="Tap to add ${escapeHtml(p.fixEx)}" onclick="addExerciseToSession('${safeFix}', 2, '${fixReps}', '${fixHold}', 'Added to fill session gap')">
+      + ${escapeHtml(p.label)} <span style="opacity:0.8;">(${escapeHtml(p.fixShort)})</span>
+    </button>`;
+  }).join("");
+
+  const neglected7dHtml = gap.neglected7d.length > 0
+    ? gap.neglected7d.slice(0, 6).map(z => {
+        const safeFix = z.fixEx.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        const shortZ = z.label.split("(")[0].trim();
+        return `<button class="gap-pill warn" style="cursor:pointer;" title="0 sets in last 7 days — tap to add ${escapeHtml(z.fixEx)}" onclick="addExerciseToSession('${safeFix}', 2, '6', '20', 'Added for 7-day neglected zone')">
+          ⚠️ ${escapeHtml(shortZ)} → + ${escapeHtml(z.fixEx.split("(")[0].trim())}
+        </button>`;
+      }).join("")
+    : `<span style="font-size:11px; color:#6ee7b7; font-weight:700;">✅ Zero neglected body zones across the last 7 days + today!</span>`;
+
+  container.innerHTML = `
+    <div class="custom-builder-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
+        <div style="font-size:13px; font-weight:800; color:#e9d5ff;">
+          ${isCustomSession ? "✏️ Custom / Free-Text Workout Builder (Logs to Sheet &amp; Strava)" : "✏️ Quick Free-Text Add &amp; Live Gap Check"}
+        </div>
+        ${!isCustomSession ? `<button class="btn btn-outline btn-xs" onclick="toggleCustomBuilderPanel()">✕ Hide</button>` : `<span class="badge badge-purple">${gap.totalExercises} exercise${gap.totalExercises === 1 ? "" : "s"} in session</span>`}
+      </div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;">
+        <input type="text" id="qbFreeTextInput" class="search-input" style="margin-bottom:0; flex:2 1 210px;" placeholder="Type any exercise(s): e.g. Sit-Up, Pendulum Squat 3x8, Cable Row 3x10..." oninput="updateQuickBuilderPreview()" onkeydown="if(event.key==='Enter'){event.preventDefault();addFromQuickBuilderInput();}" />
+        <select id="qbSetsSelect" style="width:76px;" onchange="updateQuickBuilderPreview()">
+          <option value="2">2 sets</option>
+          <option value="3" selected>3 sets</option>
+          <option value="4">4 sets</option>
+          <option value="5">5 sets</option>
+          <option value="1">1 set</option>
+        </select>
+        <select id="qbTagSelect" style="flex:1 1 135px;" onchange="updateQuickBuilderPreview()" title="Optional muscle group tag for Body Map &amp; Gap Analysis">
+          <option value="auto">🎯 Muscle: Auto-Detect</option>
+          <option value="core_ant">Anterior Core / Abs</option>
+          <option value="core_lat">Lateral / Lower-Back Core</option>
+          <option value="quads">Quads / Squat</option>
+          <option value="hinge">Hamstrings / Glutes / Hinge</option>
+          <option value="push">Chest / Triceps (Push)</option>
+          <option value="pull">Back / Lats / Biceps (Pull)</option>
+          <option value="shoulders">Shoulders / Overhead / Cuff</option>
+          <option value="arms_grip">Arms / Forearms / Grip</option>
+          <option value="calves">Calves / Achilles / Tibialis</option>
+          <option value="mobility">Hip / Spine Mobility</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="addFromQuickBuilderInput()">+ Add</button>
+      </div>
+      <div id="qbDetectPreview" style="font-size:11px; color:var(--muted); margin-bottom:8px;">
+        💡 Type one exercise (e.g. <code>Sit-Up</code> or <code>Cable Row 3x10</code>) or paste a comma-separated list (e.g. <code>Incline DB Bench 3x8, Lat Pulldown 3x10, Sit-Up 3x12</code>).
+      </div>
+
+      <div style="margin-bottom:8px;">
+        <div style="font-size:10px; font-weight:800; color:#d8b4fe; text-transform:uppercase; margin-bottom:4px;">⚡ Saved Free-Text &amp; 1-Tap Staples</div>
+        <div class="chip-row" style="margin-bottom:5px;">${savedChipsHtml}</div>
+        <div class="chip-row">${stapleChipsHtml}</div>
+      </div>
+
+      <div style="padding-top:8px; border-top:1px solid rgba(168,85,247,0.28);">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:5px;">
+          <span style="font-size:11px; font-weight:800; color:#93c5fd;">🧭 Live Session Coverage &amp; Gap Analysis (Tap any red/amber pill to add!)</span>
+          <button class="btn btn-outline btn-xs" style="padding:2px 7px; font-size:10px;" onclick="scrollToBodyMap()">🧍 Full Body Map</button>
+        </div>
+        <div style="display:flex; gap:5px; flex-wrap:wrap; margin-bottom:6px;">
+          ${coveredPillsHtml}
+          ${missingPillsHtml}
+        </div>
+        <div style="font-size:10px; font-weight:800; color:#fcd34d; text-transform:uppercase; margin-bottom:4px;">📅 7-Day Neglected Zones (0 sets in last 7d + today)</div>
+        <div style="display:flex; gap:5px; flex-wrap:wrap;">
+          ${neglected7dHtml}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderExercises() {
   const phaseObj = WORKOUT_TEMPLATES[appState.phase] || WORKOUT_TEMPLATES["1a"];
   const sessionObj = phaseObj.sessions[appState.sessionId] || Object.values(phaseObj.sessions)[0];
@@ -8083,6 +8661,8 @@ function renderExercises() {
       ? "inline-flex"
       : "none";
   }
+
+  renderCustomWorkoutBuilder(sessionObj, draft);
 
   const warmupContainer = document.getElementById("warmupContainer");
   warmupContainer.innerHTML = "";
@@ -8111,6 +8691,12 @@ function renderExercises() {
   exList.innerHTML = "";
 
   const orderedMain = getOrderedSessionExercises(sessionObj, draft);
+  if (orderedMain.length === 0 && sessionObj.id === "custom_workout") {
+    const emptyHint = document.createElement("div");
+    emptyHint.style.cssText = "padding:16px; border:1px dashed rgba(168,85,247,0.5); border-radius:12px; text-align:center; color:var(--muted); font-size:13px; margin-bottom:10px;";
+    emptyHint.innerHTML = `✏️ <b>Your Custom Workout canvas is ready!</b><br>Type any free-text exercise(s) above, tap a saved chip, or tap a red/amber Gap Analysis pill to start logging sets.`;
+    exList.appendChild(emptyHint);
+  }
   orderedMain.forEach((ex, idx) => {
     exList.appendChild(renderExerciseCard(ex, draft, false, !!ex._isCustom, ex._customIdx, idx, orderedMain.length));
   });
@@ -8397,15 +8983,58 @@ function playTimerBeep() {
 }
 
 // ============================================================================
-// 6. ADD ANY EXERCISE MODAL (QUICK CHIPS, FULL CATALOG SEARCH, OR CUSTOM)
+// 6. ADD ANY EXERCISE MODAL (QUICK CHIPS, SAVED FREE-TEXT, CATALOG, OR CUSTOM)
 // ============================================================================
 function openAddExerciseModal() {
   document.getElementById("addExModal").classList.add("open");
+  renderSavedFreeTextChipsInModal();
   renderQuickAddChips();
   renderCatalogSearchResults();
 }
 function closeAddExerciseModal() {
   document.getElementById("addExModal").classList.remove("open");
+}
+
+function renderSavedFreeTextChipsInModal() {
+  const sec = document.getElementById("savedFreeTextModalSection");
+  const container = document.getElementById("savedFreeTextChips");
+  if (!sec || !container) return;
+  const list = getSavedFreeTextExercises();
+  if (list.length === 0) {
+    sec.style.display = "none";
+    container.innerHTML = "";
+    return;
+  }
+  sec.style.display = "block";
+  container.innerHTML = "";
+  list.forEach(name => {
+    const perf = appState.lastByExercise && appState.lastByExercise[name];
+    const perfHint = perf ? ` (${perf.load !== "" ? perf.load : "bw"}×${perf.reps})` : "";
+    const chip = document.createElement("span");
+    chip.className = "saved-ft-chip";
+    const addSpan = document.createElement("span");
+    addSpan.textContent = `+ ${name}${perfHint}`;
+    addSpan.onclick = () => {
+      const prevSets = appState.lastSetsByExercise && appState.lastSetsByExercise[name];
+      const setsCount = (prevSets && Array.isArray(prevSets.sets) && prevSets.sets.length > 0) ? prevSets.sets.length : 3;
+      addExerciseToSession(name, setsCount, "8", "", "Saved free-text exercise");
+      closeAddExerciseModal();
+    };
+    const delSpan = document.createElement("span");
+    delSpan.className = "saved-ft-del";
+    delSpan.title = "Remove from saved chips";
+    delSpan.textContent = "×";
+    delSpan.onclick = (ev) => {
+      ev.stopPropagation();
+      removeSavedFreeTextExercise(name);
+      renderSavedFreeTextChipsInModal();
+      renderCatalogSearchResults();
+      renderExercises();
+    };
+    chip.appendChild(addSpan);
+    chip.appendChild(delSpan);
+    container.appendChild(chip);
+  });
 }
 
 function renderQuickAddChips() {
@@ -8424,10 +9053,30 @@ function renderQuickAddChips() {
 }
 
 function renderCatalogSearchResults() {
-  const q = (document.getElementById("catalogSearchInput").value || "").toLowerCase().trim();
+  const rawQ = (document.getElementById("catalogSearchInput").value || "").trim();
+  const q = rawQ.toLowerCase();
   const container = document.getElementById("catalogSearchResults");
   container.innerHTML = "";
-  const matches = MASTER_CATALOG.filter(name => !q || name.toLowerCase().includes(q));
+
+  const savedCustom = getSavedFreeTextExercises().filter(name => !q || name.toLowerCase().includes(q));
+  const savedLowerSet = new Set(savedCustom.map(n => n.toLowerCase()));
+
+  savedCustom.forEach(name => {
+    const perf = appState.lastByExercise && appState.lastByExercise[name];
+    const perfBadge = perf ? ` <span style="font-size:11px; color:var(--muted);">(${escapeHtml(perf.load !== "" ? perf.load : "bw")}×${escapeHtml(perf.reps)})</span>` : "";
+    const row = document.createElement("div");
+    row.style.cssText = "padding:9px 10px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-size:13px; background:rgba(168,85,247,0.08);";
+    row.innerHTML = `<span><span class="badge badge-purple" style="margin-right:6px;">✏️ Saved</span>${escapeHtml(name)}${perfBadge}</span><span style="color:#d8b4fe; font-weight:800;">+ Add</span>`;
+    row.onclick = () => {
+      const prevSets = appState.lastSetsByExercise && appState.lastSetsByExercise[name];
+      const setsCount = (prevSets && Array.isArray(prevSets.sets) && prevSets.sets.length > 0) ? prevSets.sets.length : 3;
+      addExerciseToSession(name, setsCount, "8", "", "Saved free-text exercise");
+      closeAddExerciseModal();
+    };
+    container.appendChild(row);
+  });
+
+  const matches = MASTER_CATALOG.filter(name => (!q || name.toLowerCase().includes(q)) && !savedLowerSet.has(name.toLowerCase()));
   matches.forEach(name => {
     const row = document.createElement("div");
     row.style.cssText = "padding:9px 10px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-size:13px;";
@@ -8438,20 +9087,51 @@ function renderCatalogSearchResults() {
     };
     container.appendChild(row);
   });
+
+  const hasExact = savedCustom.some(n => n.toLowerCase() === q) || matches.some(n => n.toLowerCase() === q);
+  if (rawQ && !hasExact) {
+    const ftRow = document.createElement("div");
+    ftRow.style.cssText = "padding:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-size:13px; background:rgba(59,130,246,0.12); border-top:1px dashed rgba(59,130,246,0.45);";
+    ftRow.innerHTML = `<span>➕ <b>Add Free-Text Exercise:</b> "${escapeHtml(rawQ)}" <span style="font-size:11px; color:var(--muted);">(auto-saves for 1-tap reuse)</span></span><span style="color:#93c5fd; font-weight:800;">+ Add</span>`;
+    ftRow.onclick = () => {
+      const parsedItems = parseQuickFreeTextLines(rawQ, 3);
+      parsedItems.forEach(it => {
+        saveCustomExerciseToMemory(it.name);
+        addExerciseToSession(it.name, it.sets, it.reps, "", "Custom free-text exercise");
+      });
+      document.getElementById("catalogSearchInput").value = "";
+      closeAddExerciseModal();
+    };
+    container.appendChild(ftRow);
+  }
 }
 
 function addCustomExerciseFromInput() {
   const nameInput = document.getElementById("customExNameInput");
   const setsInput = document.getElementById("customExSetsInput");
-  const name = (nameInput.value || "").trim();
-  if (!name) return;
-  const sets = parseInt(setsInput.value, 10) || 2;
-  addExerciseToSession(name, sets, "8", "", "Custom added exercise");
+  const tagSelect = document.getElementById("customExTagSelect");
+  const raw = (nameInput.value || "").trim();
+  if (!raw) return;
+  const fallbackSets = parseInt(setsInput.value, 10) || 2;
+  const tagVal = tagSelect ? tagSelect.value : "auto";
+  const items = parseQuickFreeTextLines(raw, fallbackSets);
+  if (items.length === 0) return;
+
+  items.forEach(it => {
+    saveCustomExerciseToMemory(it.name, { tag: tagVal });
+    addExerciseToSession(it.name, it.sets, it.reps, "", "Custom free-text exercise");
+  });
   nameInput.value = "";
+  if (tagSelect) tagSelect.value = "auto";
   closeAddExerciseModal();
 }
 
 function addExerciseToSession(name, setsCount, defaultReps, defaultHold, cue, forcedPosMode) {
+  const cleanName = String(name || "").trim();
+  if (!cleanName) return;
+  if (!isStandardCatalogExercise(cleanName)) {
+    saveCustomExerciseToMemory(cleanName);
+  }
   const draft = ensureSessionDraft();
   const phaseObj = WORKOUT_TEMPLATES[appState.phase] || WORKOUT_TEMPLATES["1a"];
   const sessionObj = phaseObj.sessions[appState.sessionId] || Object.values(phaseObj.sessions)[0];
@@ -8462,31 +9142,31 @@ function addExerciseToSession(name, setsCount, defaultReps, defaultHold, cue, fo
   const orderedBefore = getOrderedSessionExercises(sessionObj, draft);
   const nextUpBefore = getNextUpInsertIndex(orderedBefore, draft);
 
-  delete draft.skippedToday[name];
-  delete draft.skippedRestToday[name];
-  draft.expandedDone[name] = true;
+  delete draft.skippedToday[cleanName];
+  delete draft.skippedRestToday[cleanName];
+  draft.expandedDone[cleanName] = true;
 
-  const existsInMain = sessionObj.exercises.some(e => e.name === name);
-  const existsInCustom = draft.customExercises.some(e => e.name === name);
+  const existsInMain = sessionObj.exercises.some(e => e.name === cleanName);
+  const existsInCustom = draft.customExercises.some(e => e.name === cleanName);
 
   if (!existsInMain && !existsInCustom) {
     draft.customExercises.push({
-      name,
+      name: cleanName,
       pair: "Added",
       sets: setsCount || 2,
       defaultReps: defaultReps || "",
       defaultHold: defaultHold || "",
       cue: cue || "Added to today's workout"
     });
-  } else if (draft.setsData[name] && draft.setsData[name].some(s => s && s.done)) {
-    const last = draft.setsData[name][draft.setsData[name].length - 1] || { load: "", reps: "", hold: "" };
-    draft.setsData[name].push({ load: last.load ?? "", reps: last.reps ?? "", hold: last.hold ?? "", done: false });
+  } else if (draft.setsData[cleanName] && draft.setsData[cleanName].some(s => s && s.done)) {
+    const last = draft.setsData[cleanName][draft.setsData[cleanName].length - 1] || { load: "", reps: "", hold: "" };
+    draft.setsData[cleanName].push({ load: last.load ?? "", reps: last.reps ?? "", hold: last.hold ?? "", done: false });
   }
 
   // Place at requested position in current workout order (Next Up, Top, or Bottom)
   if (posMode === "next_up" || posMode === "top" || Array.isArray(draft.exerciseOrder)) {
     const order = ensureDraftExerciseOrder(sessionObj, draft);
-    const curIdx = order.indexOf(name);
+    const curIdx = order.indexOf(cleanName);
     if (curIdx !== -1) order.splice(curIdx, 1);
     let insertAt = order.length;
     if (posMode === "top") {
@@ -8494,15 +9174,15 @@ function addExerciseToSession(name, setsCount, defaultReps, defaultHold, cue, fo
     } else if (posMode === "next_up") {
       insertAt = Math.max(0, Math.min(order.length, nextUpBefore));
     }
-    order.splice(insertAt, 0, name);
+    order.splice(insertAt, 0, cleanName);
   }
 
   saveDraftState();
   renderExercises();
   renderBodyCoverageMap();
   const finalList = getOrderedSessionExercises(sessionObj, draft);
-  const slotNum = finalList.findIndex(e => e.name === name) + 1;
-  showToast(`Added "${name.split("(")[0].trim()}" at #${slotNum || finalList.length}`);
+  const slotNum = finalList.findIndex(e => e.name === cleanName) + 1;
+  showToast(`Added "${cleanName.split("(")[0].trim()}" at #${slotNum || finalList.length}`);
 }
 
 // ============================================================================
@@ -8759,6 +9439,39 @@ async function finishAndSaveWorkout() {
   let totalLoggedSets = 0;
   const summaryParts = [];
   const newExercisesForRecord = [];
+  let customLowerSets = 0;
+  let customUpperSets = 0;
+  let customMobSets = 0;
+  let savedNewFreeText = false;
+  const lowerZoneSet = new Set(["quads", "hamstrings", "glutes", "glute_med", "adductors", "hip_flexors", "calves", "tibialis"]);
+  const upperZoneSet = new Set(["shoulders", "chest", "biceps", "forearms", "traps_thoracic", "rotator_cuff", "lats", "triceps"]);
+
+  completedByEx.forEach(item => {
+    const eff = item.eff;
+    const histKey = eff.historyKey;
+    if (!isStandardCatalogExercise(histKey)) {
+      saveCustomExerciseToMemory(histKey, { skipCloudPush: true });
+      savedNewFreeText = true;
+    }
+    const imp = classifyExerciseImpact(histKey);
+    if (imp.zones.some(z => lowerZoneSet.has(z))) customLowerSets += item.doneSets.length;
+    if (imp.zones.some(z => upperZoneSet.has(z))) customUpperSets += item.doneSets.length;
+    if (imp.m >= 1.35 && imp.s <= 0.9) customMobSets += item.doneSets.length;
+  });
+  if (savedNewFreeText && typeof pushCloudSettingsToBackend === "function") {
+    pushCloudSettingsToBackend();
+  }
+
+  const effectiveSessionCategory = sessionObj.id === "custom_workout"
+    ? (customLowerSets > 0 && customLowerSets >= customUpperSets
+        ? "Tendon & Mobility (Lower)"
+        : (customMobSets > customUpperSets && customLowerSets === 0
+            ? "Dedicated Mobility"
+            : "Tendon & Mobility (Upper)"))
+    : (sessionObj.category || "Tendon & Mobility (Upper)");
+  const effectiveLegHeavy = sessionObj.id === "custom_workout"
+    ? (customLowerSets >= 3)
+    : !!sessionObj.legHeavy;
 
   completedByEx.forEach(item => {
     const eff = item.eff;
@@ -8805,7 +9518,7 @@ async function finishAndSaveWorkout() {
         appState.unsyncedRows.push([
           date,
           validPhase,
-          sessionObj.category || "Tendon & Mobility (Upper)",
+          effectiveSessionCategory,
           toSheetExerciseName(eff.sheetExerciseName),
           String(prevSetOffset + idxInDone + 1),
           ds.load !== "" ? ds.load : "bw",
@@ -8836,7 +9549,7 @@ async function finishAndSaveWorkout() {
     phaseLabel: phaseObj.label,
     sessionId: sessionObj.id,
     sessionName: sessionObj.name,
-    category: sessionObj.category,
+    category: effectiveSessionCategory,
     location: appState.location,
     rpe: validRpe,
     durationSec: mergedDurationSec,
@@ -8872,7 +9585,7 @@ async function finishAndSaveWorkout() {
     stravaId: existingHistIdx >= 0 ? appState.history[existingHistIdx].stravaId : undefined,
     title: `${sessionObj.name.replace(/^[^:]+:\s*/, "").split("—")[0].trim()} — ${totalMergedSets} Sets${mergedDurStr ? " (" + mergedDurStr + ")" : ""}`,
     summary: `${mergedDurStr ? "⏱️ " + mergedDurStr + " • " : ""}${mergedSummaryParts.join(", ")}`,
-    legImpact: sessionObj.legHeavy ? "high" : "low"
+    legImpact: effectiveLegHeavy ? "high" : "low"
   };
   if (existingHistIdx >= 0) {
     appState.history[existingHistIdx] = histObj;
@@ -8972,28 +9685,34 @@ function inferWorkoutSessionFromExercises(phaseKey, exNamesArr, categoryHint) {
   const sessions = phaseObj.sessions || {};
   let bestId = "lower_1a";
   let bestScore = -1;
+  let bestPoolMatches = 0;
 
   const cleanList = exNamesArr.map(n => cleanExerciseTitle(fromSheetExerciseName(n)).toLowerCase());
   Object.keys(sessions).forEach(sid => {
     const sess = sessions[sid];
-    if (!sess || sid === "long_run") return;
+    if (!sess || sid === "long_run" || sid === "custom_workout") return;
     const pool = [...(sess.warmups || []), ...(sess.exercises || [])]
       .map(e => cleanExerciseTitle(e.name).toLowerCase());
-    let score = 0;
+    let poolMatches = 0;
     cleanList.forEach(doneName => {
       const shortDone = doneName.split("(")[0].trim();
       if (pool.some(p => p === doneName || p.split("(")[0].trim() === shortDone)) {
-        score += 2;
+        poolMatches++;
       }
     });
+    let score = poolMatches * 2;
     if (categoryHint && sess.category && String(sess.category).toLowerCase() === String(categoryHint).toLowerCase()) {
       score += 1;
     }
     if (score > bestScore) {
       bestScore = score;
       bestId = sid;
+      bestPoolMatches = poolMatches;
     }
   });
+  if (bestPoolMatches === 0 && cleanList.length > 0 && sessions["custom_workout"]) {
+    return "custom_workout";
+  }
   return bestId;
 }
 
@@ -9170,10 +9889,42 @@ async function pullStateFromSheet(isInitialStartup) {
         appState.stravaAuto = cs.stravaAuto;
       }
       if (cs.savedCustomSwaps && typeof cs.savedCustomSwaps === "object") {
-        const curRecent = (appState.savedCustomSwaps && appState.savedCustomSwaps.recent) || [];
-        if (curRecent.length === 0 && Array.isArray(cs.savedCustomSwaps.recent) && cs.savedCustomSwaps.recent.length > 0) {
-          appState.savedCustomSwaps = cs.savedCustomSwaps;
+        const localSwaps = ensureSavedCustomSwapsShape(appState.savedCustomSwaps);
+        const remoteSwaps = cs.savedCustomSwaps;
+        if (remoteSwaps.byExercise && typeof remoteSwaps.byExercise === "object") {
+          Object.keys(remoteSwaps.byExercise).forEach(exKey => {
+            const remArr = Array.isArray(remoteSwaps.byExercise[exKey]) ? remoteSwaps.byExercise[exKey] : [];
+            const locArr = Array.isArray(localSwaps.byExercise[exKey]) ? localSwaps.byExercise[exKey] : [];
+            const merged = [...locArr];
+            remArr.forEach(item => {
+              const clean = cleanExerciseTitle(item);
+              if (clean && !merged.some(x => x.toLowerCase() === clean.toLowerCase())) merged.push(clean);
+            });
+            localSwaps.byExercise[exKey] = merged.slice(0, 8);
+          });
         }
+        if (Array.isArray(remoteSwaps.recent)) {
+          remoteSwaps.recent.forEach(item => {
+            const clean = cleanExerciseTitle(item);
+            if (clean && !localSwaps.recent.some(x => x.toLowerCase() === clean.toLowerCase())) {
+              localSwaps.recent.push(clean);
+            }
+          });
+          localSwaps.recent = localSwaps.recent.slice(0, 20);
+        }
+        if (Array.isArray(remoteSwaps.customExercises)) {
+          remoteSwaps.customExercises.forEach(item => {
+            const clean = cleanExerciseTitle(item);
+            if (clean && !localSwaps.customExercises.some(x => x.toLowerCase() === clean.toLowerCase())) {
+              localSwaps.customExercises.push(clean);
+            }
+          });
+          localSwaps.customExercises = localSwaps.customExercises.slice(0, 40);
+        }
+        if (remoteSwaps.customTags && typeof remoteSwaps.customTags === "object") {
+          localSwaps.customTags = Object.assign({}, remoteSwaps.customTags, localSwaps.customTags || {});
+        }
+        appState.savedCustomSwaps = localSwaps;
       }
       if (cs.stravaReviewedIds && typeof cs.stravaReviewedIds === "object") {
         appState.stravaReviewedIds = Object.assign({}, cs.stravaReviewedIds, appState.stravaReviewedIds || {});
@@ -9208,6 +9959,13 @@ async function pullStateFromSheet(isInitialStartup) {
         const exName = fromSheetExerciseName(rawEx);
         // Skip Nov 5 Standing Band Adduction so it doesn't pre-fill Copenhagen Plank with "red band"
         if (exName === "Standing Straight-Legged Hip Adduction (Band or Cable) (Superset B)") return;
+
+        // Auto-surface any historical free-text strength/mobility exercises in Saved Free-Text Chips
+        const cat = String(r.category || "").trim();
+        const isCardioRow = cat === "Engine & Conditioning" || isWatchCardioExercise(rawEx) || /\b(biking|cycling|strava watch)\b/i.test(rawEx);
+        if (!isCardioRow && !isStandardCatalogExercise(exName)) {
+          saveCustomExerciseToMemory(exName, { skipCloudPush: true });
+        }
 
         if (!remoteByExAndDate[exName]) remoteByExAndDate[exName] = {};
         if (!remoteByExAndDate[exName][dStr]) remoteByExAndDate[exName][dStr] = [];
