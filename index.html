@@ -731,6 +731,7 @@
   </div>
   <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
     <button class="btn btn-success btn-sm" id="installPwaBtn" style="display:none;" onclick="triggerPwaInstall()">📲 Install</button>
+    <button class="btn btn-success btn-sm" onclick="selectSession('upper_lowerflex_combo')" title="Upper Strength (Horizontal Pull First) + Lower Flexibility & Forgotten Gaps Combo">💪+🧘 Upper/Flex</button>
     <button class="btn btn-amber btn-sm" onclick="selectSession('quick_fullbody')" title="30-40 Min All-Superset Full-Body">⚡ Quick 35m</button>
     <button class="btn btn-outline btn-sm" style="border-color:rgba(45,212,191,0.55); color:#5eead4;" onclick="openCustomWorkoutSession()" title="Quick Custom Free-Text Workout Builder + Gap Analysis">✏️ Custom</button>
     <button class="btn btn-outline btn-sm" onclick="scrollToBodyMap()" title="Neglected Muscles & Mobility Map">🧬 Body Map</button>
@@ -2153,11 +2154,175 @@ const CUSTOM_WORKOUT_SESSION = {
   exercises: []
 };
 
+// ============================================================================
+// 1C. UPPER STRENGTH (HORIZONTAL PULL FIRST) + LOWER FLEXIBILITY & GAPS COMBO
+// ============================================================================
+const UPPER_LOWERFLEX_COMBO_SESSION = {
+  id: "upper_lowerflex_combo",
+  name: "💪+🧘 Combo: Upper Strength (Row First) + Lower Flex & Gaps (~50–60m)",
+  category: "Tendon & Mobility (Upper)",
+  legHeavy: false,
+  warmups: [
+    {
+      name: "Deep German Hang / Skin-the-Cat (Feet-Supported if needed)",
+      pair: "Warm-Up 1 (Shoulder Ext)",
+      sets: 2,
+      defaultReps: "8 Pulls + 8 Disl + 2–3 STC",
+      cue: "8 Scapular Pulls + 8 Band/Dowel Dislocates + 2–3 Controlled Skin-the-Cats -> 15–20s German Hang on final rep (feet-assisted as needed; note hold time for baseline!)"
+    },
+    {
+      name: "Cossack-to-Runner Lunge Flow (Unloaded)",
+      pair: "Warm-Up 2 (Hip Prep)",
+      sets: 2,
+      defaultReps: "5/side",
+      cue: "5 slow transitional lunges per side (5s sink at end-range to warm hips for lower flexibility)"
+    }
+  ],
+  exercises: [
+    {
+      name: "Feet-Elevated Inverted Row (Rings or Bar)",
+      pair: "Superset A1 (Horiz Pull FIRST)",
+      sets: 3,
+      defaultReps: "5",
+      defaultHold: "20",
+      cue: "Horizontal pull first! 4–6 reps (2–3s chest-to-bar pause -> 4s slow eccentric -> 3s protracted hang). Tap ⇄ Alt for Strict Barbell Pendlay Row or Chest-Supported DB Row.",
+      holdCue: "Final Rep: 15s hold @ 90° -> 20s protracted bottom hang"
+    },
+    {
+      name: "Strict Side Plank (Short-Lever -> Full Isometric Hold)",
+      pair: "Superset A2 (Forgotten Core EARLY)",
+      sets: 3,
+      defaultReps: "15–30s/side",
+      defaultHold: "20",
+      cue: "Priority gap (15s baseline 6 Nov — untrained since)! Short-lever (knees 90°) or 2–3 x 12–15s clusters per set; elbow under shoulder, glutes squeezed, hips & ribs strictly stacked.",
+      holdCue: "Hold: 15–30s/side strict (stop immediately if hips sag or twist)"
+    },
+    {
+      name: "Upright Wall Couch Stretch (Strict PPT Bias)",
+      pair: "Superset A3 (Lower Flex: Hip/Quad)",
+      sets: 3,
+      defaultReps: "3 PNF/side",
+      defaultHold: "20",
+      cue: "ATG Hip #3 (post-hike quad/psoas decompression): Squeeze rear glute FIRST (move knee 5cm from wall if low back arches) -> 3 PNF cycles (5s foot press -> 3s relax -> 15–20s sink).",
+      holdCue: "15–20s passive sink/cycle w/ glute locked -> rest 45–60s"
+    },
+    {
+      name: "Weighted Deep Dip (Rings or Bars)",
+      pair: "Superset B1 (Deep Upper Push)",
+      sets: 3,
+      defaultReps: "6",
+      defaultHold: "20",
+      cue: "Full/Outdoor: Deep Dip (or tap ⇄ Alt for Deep DB Bench / Paused Barbell Bench) | Home: Deep Elevated/TRX Push-Up or Assisted Rack Dip. 4s eccentric -> 3s deep stretch pause (shoulders depressed).",
+      holdCue: "Set 3 Final Rep: 20s active bottom stretch hover (zero elbow/front-shoulder pain)"
+    },
+    {
+      name: "Wall Straddle & 90° Frog PNF Contract-Relax",
+      pair: "Superset B2 (Lower Flex: Pancake)",
+      sets: 3,
+      defaultReps: "3 PNF / 25s",
+      defaultHold: "25",
+      cue: "Full Gym: Loaded Seated Butterfly (8 kg) or Straddle/Frog PNF | Home: Seated Floor Straddle pulling Squat Rack upright. 10s squeeze -> 3s relax -> 25–30s flat-spine sink (elevate hips if low back rounds).",
+      holdCue: "25–30s flat-spine groin / pancake sink"
+    },
+    {
+      name: "Knee-Supported Seated KB / Plate External Rotation",
+      pair: "Superset B3 (Forgotten Cuff ER)",
+      sets: 2,
+      defaultReps: "4/side",
+      defaultHold: "20",
+      cue: "Never logged yet! Pair with Sets 1–2 of B (light plate/DB @ RPE <= 6): 4s eccentric across torso into internal rotation -> 4s bottom pause.",
+      holdCue: "Rep 5: 20–25s hover 1 inch off bottom stretch -> rest 45–60s"
+    },
+    {
+      name: "Weighted Pull-Up / Chin-Up",
+      pair: "Superset C1 (Vertical Pull)",
+      sets: 3,
+      defaultReps: "5",
+      defaultHold: "20",
+      cue: "Last: 4, 5, 3 @ bw (17 Nov). Full dead-hang reset, 3–4s eccentric, active scap pull, chin cleanly over bar (Home low ceiling: L-sit/tucked knees; dial reps/load by RPE 6–7).",
+      holdCue: "Final Rep: 20s two-arm active hang"
+    },
+    {
+      name: "Elevated Front Split Isometric Scissor (\"4+1\" Protocol)",
+      pair: "Superset C2 (Lower Flex: Front Split)",
+      sets: 3,
+      defaultReps: "4/side",
+      defaultHold: "20",
+      cue: "Last done 8 Nov! Hands on blocks/bench, hips strictly squared (no pelvis opening or low-back arch): 4 slow 4s slides + 3–4s scissor squeeze (or ⇄ Alt for Arched-Back Pike Leg Lifts).",
+      holdCue: "Rep 5: 20–25s active isometric split hover/side"
+    },
+    {
+      name: "Side-Lying KB / Plate Internal Rotation",
+      pair: "Superset C3 (Forgotten Cuff IR)",
+      sets: 2,
+      defaultReps: "4/side",
+      defaultHold: "20",
+      cue: "Never logged yet! Pair with Sets 1–2 of C (light plate/DB @ RPE <= 6): 4s eccentric into external rotation stretch -> 4s bottom pause (shoulder blade flat).",
+      holdCue: "Rep 5: 20–25s end-range hold -> rest 45–60s"
+    },
+    {
+      name: "Deficit Pike Push-Up (Elevated Feet)",
+      pair: "Superset D1 (Vertical Overhead Push)",
+      sets: 3,
+      defaultReps: "5",
+      defaultHold: "20",
+      cue: "Full Gym: Deep DB Shoulder Press (18 kg) or Strict Barbell OHP via ⇄ Alt | Home: Deficit Pike Push-Up or Seated Floor Barbell Z-Press (clears low ceiling). Ribs stacked, zero swayback arch!",
+      holdCue: "Set 3 Final Rep: 15–20s active overhead lockout hold"
+    },
+    {
+      name: "Bench Pigeon Good Morning (Unloaded or Light Plate Only)",
+      pair: "Superset D2 (Lower Flex: ATG #1)",
+      sets: 2,
+      defaultReps: "5/side",
+      defaultHold: "20",
+      cue: "1st open external hip capsule ('Head to Foot'): front shin & ankle flat on bench, pelvis level -> 4s hinge -> go straight into D3!",
+      holdCue: "Final Rep: 20s bottom stretch hold/side"
+    },
+    {
+      name: "Seated 90/90 Rear-Hip Internal Rotation Lift-Offs & Hold",
+      pair: "Superset D3 (Active Left-Hip IR)",
+      sets: 2,
+      defaultReps: "6–8/side",
+      defaultHold: "15",
+      cue: "2nd claim active IR in the opened hip socket: plant hand beside front hip (zero torso lean) -> lift rear ankle/shin 3s. Compare Left vs Right!",
+      holdCue: "Final Rep: 15–20s active end-range IR hover -> rest 45–60s"
+    },
+    {
+      name: "Barbell Finger Roll-Outs (Distal Fingertip Grip)",
+      pair: "Superset E1 (Forgotten Distal Grip)",
+      sets: 2,
+      defaultReps: "4",
+      defaultHold: "20",
+      cue: "Never logged yet (separated from Rows/Pull-Ups)! 4s slow roll from closed fist to fingertips -> 3s hook pause (or ⇄ Alt for Captains of Crush #15).",
+      holdCue: "Rep 5: 20–30s isometric hold on distal fingertips"
+    },
+    {
+      name: "Front Plank / RKC Plank or Hollow-Body Hold",
+      pair: "Superset E2 (Forgotten Anti-Swayback)",
+      sets: 2,
+      defaultReps: "35s hold",
+      defaultHold: "35",
+      cue: "Never logged yet! 4 max-tension RKC breath cycles (posterior pelvic tilt, glutes locked — time Set 1 for Week 1–2 baseline! Tap ⇄ Alt for Pallof Press + OH Raise).",
+      holdCue: "Hold: 30–45s strict RKC plank or hollow-body hold"
+    },
+    {
+      name: "Lumbar-Blocked Bench Thoracic Meltdown + Thumbs-Up Overhead Lifts (+ Wrist Ext.)",
+      pair: "Finisher E3 (Thoracic / Bridge)",
+      sets: 2,
+      defaultReps: "6–8 + 45s",
+      defaultHold: "45",
+      cue: "Never logged yet! Pin yoga block/roller between belly & thighs (blocks swayback!) -> 6–8 thumbs-up lifts + thoracic sink + wrist rocks. Close w/ 5m Supine Legs-Up Box Breathing (4-4-6-2).",
+      holdCue: "30–45s thoracic meltdown sink + 20s wrist extension"
+    }
+  ]
+};
+
 Object.keys(WORKOUT_TEMPLATES).forEach(pk => {
   WORKOUT_TEMPLATES[pk].sessions["quick_fullbody"] = JSON.parse(JSON.stringify(QUICK_FULLBODY_SESSION));
   if (!WORKOUT_TEMPLATES[pk].rotationOrder.includes("quick_fullbody")) {
     WORKOUT_TEMPLATES[pk].rotationOrder.push("quick_fullbody");
   }
+  WORKOUT_TEMPLATES[pk].sessions["upper_lowerflex_combo"] = JSON.parse(JSON.stringify(UPPER_LOWERFLEX_COMBO_SESSION));
   WORKOUT_TEMPLATES[pk].sessions["custom_workout"] = JSON.parse(JSON.stringify(CUSTOM_WORKOUT_SESSION));
 });
 
@@ -7054,11 +7219,11 @@ function computeRecommendation() {
   const nextUpper = getNextUpper1aVariant(appState.history);
   const baseRot = appState.phase === "1a"
     ? ["lower_1a", nextUpper, "long_run", "skill_sweep", "mobility"]
-    : phaseObj.rotationOrder.filter(sid => sid !== "quick_fullbody" && sid !== "custom_workout");
+    : phaseObj.rotationOrder.filter(sid => sid !== "quick_fullbody" && sid !== "custom_workout" && sid !== "upper_lowerflex_combo");
   const sessions = phaseObj.sessions;
 
   const workoutEntries = appState.history.filter(h => h.type === "workout" && h.sessionId);
-  const adHocIds = new Set(["custom_workout", "quick_fullbody", "outdoor_combo", "home_catchup"]);
+  const adHocIds = new Set(["custom_workout", "quick_fullbody", "upper_lowerflex_combo", "outdoor_combo", "home_catchup"]);
   const lastRotWorkout = [...workoutEntries].reverse().find(h => !adHocIds.has(h.sessionId)) || (workoutEntries.length > 0 ? workoutEntries[workoutEntries.length - 1] : null);
 
   const recentHighLegActivity = appState.history.slice(-3).reverse().find(h =>
@@ -7124,6 +7289,12 @@ function renderRecommendationAndRotation() {
     altBtn.onclick = () => selectSession(rec.altId);
     btnContainer.appendChild(altBtn);
   }
+  const ulfBtn = document.createElement("button");
+  ulfBtn.className = "btn btn-success btn-sm";
+  ulfBtn.textContent = "💪+🧘 Upper Strength + Lower Flex Combo";
+  ulfBtn.onclick = () => selectSession("upper_lowerflex_combo");
+  btnContainer.appendChild(ulfBtn);
+
   const qfbBtn = document.createElement("button");
   qfbBtn.className = "btn btn-amber btn-sm";
   qfbBtn.textContent = "⚡ Quick 30–40m Full-Body (Supersets)";
@@ -7362,6 +7533,7 @@ function renderLocationBanner() {
       <div style="font-weight:700; color:#93c5fd; margin-bottom:4px;">🏠 Home Gym Mode Active (Low Ceiling • No DBs • No Dip Spot • No Wide Wall)</div>
       <div style="margin-bottom:6px;">Exercises below show automatic Home Gym substitutions (Sots/Z-Press, Bench Step-Down, Barbell/Plate/Band loads, Close-Grip Bench/Deficit Push-Up, Captains of Crush, Stationary Bike).</div>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="btn btn-success btn-xs" onclick="selectSession('upper_lowerflex_combo')">💪+🧘 Upper Strength + Lower Flex Combo</button>
         <button class="btn btn-primary btn-xs" onclick="selectSession('home_catchup')">🏠 Open 15-Min Home Catch-Up (Barbell RDL + GHR + Sørensen)</button>
         <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.55); color:#d8b4fe;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout</button>
       </div>
@@ -7375,6 +7547,7 @@ function renderLocationBanner() {
       <div style="margin-bottom:6px;">Elite for Pull-Ups, Dips, Rows, Muscle-Up work, Rope/TRX, Pistol/Sissy Squats, Step-Ups & Planks. Want to combine Upper & BW Lower in one trip and save the 3 Barbell/GHR hinges for a 15-min Home catch-up?</div>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
         <button class="btn btn-success btn-xs" onclick="selectSession('outdoor_combo')">🌳 Load Outdoor Full-Body Combo (Upper + BW Lower)</button>
+        <button class="btn btn-primary btn-xs" onclick="selectSession('upper_lowerflex_combo')">💪+🧘 Upper Strength + Lower Flex Combo</button>
         <button class="btn btn-outline btn-xs" onclick="selectSession('home_catchup')">🏠 View 15-Min Home Catch-Up List</button>
         <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.55); color:#d8b4fe;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout</button>
       </div>
@@ -7387,6 +7560,7 @@ function renderLocationBanner() {
       <div style="font-weight:700; color:#d8b4fe; margin-bottom:4px;">🏢 Full Gym Mode Active — Prioritizing Dumbbells, Roman Chair Back Ext & Cables</div>
       <div style="margin-bottom:6px;">Automatically upgrades exercises to use equipment you don't have at Home/Outdoors: <b>Deep DB Bench Press</b>, <b>Seated Deep DB Shoulder Press</b>, <b>Incline DB Stretch Curl</b>, <b>DB Pullover</b>, <b>DB Trap-3 Y-Raise</b>, <b>Heavy DB ATG Split/Cossack Squat</b> & <b>45° Roman Chair Back Extension</b>. Missing equipment (like no GHR)? Tap <b>⇄ Alt</b> on any card!</div>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="btn btn-success btn-xs" onclick="selectSession('upper_lowerflex_combo')">💪+🧘 Upper Strength + Lower Flex Combo</button>
         <button class="btn btn-amber btn-xs" onclick="selectSession('quick_fullbody')">⚡ Open 30–40m Quick & Dirty Full-Body (All Supersets)</button>
         <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.65); color:#e9d5ff;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout (+ Gap Analysis)</button>
       </div>
