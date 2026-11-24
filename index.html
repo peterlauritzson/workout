@@ -732,7 +732,8 @@
   <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
     <button class="btn btn-success btn-sm" id="installPwaBtn" style="display:none;" onclick="triggerPwaInstall()">📲 Install</button>
     <button class="btn btn-success btn-sm" onclick="selectSession('upper_lowerflex_combo')" title="Upper Strength (Horizontal Pull First) + Lower Flexibility & Forgotten Gaps Combo">💪+🧘 Upper/Flex</button>
-    <button class="btn btn-amber btn-sm" onclick="selectSession('quick_fullbody')" title="30-40 Min All-Superset Full-Body">⚡ Quick 35m</button>
+    <button class="btn btn-amber btn-sm" onclick="selectSession('quick_fullbody')" title="30-40 Min All-Superset Full-Body (Strength-Mobility)">⚡ Quick 35m</button>
+    <button class="btn btn-outline btn-sm" style="border-color:rgba(168,85,247,0.65); color:#d8b4fe;" onclick="selectSession('quick_mobility')" title="35-40 Min Full-Body Mobility-Strength (Big End-Range & PNF)">🧘⚡ Quick Mob</button>
     <button class="btn btn-outline btn-sm" style="border-color:rgba(45,212,191,0.55); color:#5eead4;" onclick="openCustomWorkoutSession()" title="Quick Custom Free-Text Workout Builder + Gap Analysis">✏️ Custom</button>
     <button class="btn btn-outline btn-sm" onclick="scrollToBodyMap()" title="Neglected Muscles & Mobility Map">🧬 Body Map</button>
     <button class="btn btn-strava btn-sm" onclick="openActivityModal()" title="Pull Runs, Rows & Bike Rides from Strava">🟧 Pull Strava</button>
@@ -1742,6 +1743,10 @@ const MASTER_CATALOG = [
   "Bench Pigeon Good Morning (Unloaded or Light Plate Only)",
   "Loaded Seated Butterfly (Groin \"Knees to Floor\" — ATG Hip #2)",
   "Elevated Gymnastic Bridge Push-Outs",
+  "Counterbalance Deep Cossack Squat / Assisted ATG-Pistol Bottom Pry",
+  "Weighted Shoulder Dislocates (Dowel/PVC + Plate)",
+  "Middle Split PNF (Slide-Out or Horse Stance Contract-Relax)",
+  "Deep Ring / Suspension Fly Stretch PNF (or Cambered DB Fly PNF)",
   "Supine Legs-Up Nasal Box Breathing",
   "Continuous Easy Base Run",
   "Weekday Long Run / Mountain Trail Day",
@@ -2039,6 +2044,59 @@ const LOCATION_SUBSTITUTIONS = {
       variant: "Seated Floor Straddle w/ Rack Pull (Home No Wall)"
     },
     outdoor_gym: { status: "native", text: "Native: Seated Straddle pulling on cage post" }
+  },
+  "Counterbalance Deep Cossack Squat / Assisted ATG-Pistol Bottom Pry": {
+    home_gym: {
+      status: "native",
+      text: "Native at Home: Hold 5–10 kg Weight Plate forward (or Squat Rack upright) for rock-bottom Cossack & assisted Pistol pry"
+    },
+    outdoor_gym: {
+      status: "native",
+      text: "Native Outdoors: Hold pull-up cage upright lightly to drop rock-bottom into Cossack / Pistol-bottom pry"
+    }
+  },
+  "Weighted Shoulder Dislocates (Dowel/PVC + Plate)": {
+    home_gym: {
+      status: "swap",
+      swapTitle: "🏠 Seated / Tall-Kneeling Weighted Shoulder Dislocates (Clears Low Ceiling)",
+      swapCue: "Low-Ceiling Home Swap: Kneel or sit tall on floor w/ broomstick/PVC + 1.25–5 kg plate (or heavy band) -> locked elbows, narrowest clean grip, 4s slow arc pausing 3–5s at tightest overhead/behind-back sticking zone",
+      text: "Auto-Swapped to Seated/Kneeling so Dislocates clear low ceiling",
+      variant: "Seated/Kneeling Weighted Dislocates (Home Low Ceiling)"
+    },
+    outdoor_gym: {
+      status: "native",
+      text: "Native Outdoors: Open sky — Band Dislocates (heavy band) or dowel/stick"
+    }
+  },
+  "Middle Split PNF (Slide-Out or Horse Stance Contract-Relax)": {
+    home_gym: {
+      status: "native",
+      text: "Native at Home: Socks/sliders on floor w/ hands on Flat Bench or yoga blocks (or Horse Stance PNF)"
+    },
+    outdoor_gym: {
+      status: "native",
+      text: "Native Outdoors: Isometric Horse Stance PNF or wide straddle on grass/mat holding cage upright"
+    }
+  },
+  "Deep Ring / Suspension Fly Stretch PNF (or Cambered DB Fly PNF)": {
+    home_gym: {
+      status: "native",
+      text: "Native at Home: TRX / Rings on Squat Rack (or deep wide Push-Up Elevation fly stretch PNF)"
+    },
+    outdoor_gym: {
+      status: "native",
+      text: "Native Outdoors: Rings / TRX on pull-up cage (or wide parallel-bar deep pec stretch PNF)"
+    }
+  },
+  "Elevated Gymnastic Bridge Push-Outs": {
+    home_gym: {
+      status: "native",
+      text: "Native at Home: Hands or feet elevated on Flat Bench (clears low ceiling & focuses bend into shoulders/thoracic)"
+    },
+    outdoor_gym: {
+      status: "native",
+      text: "Native Outdoors: Hands or feet elevated on park bench / low dip frame"
+    }
   }
 };
 
@@ -2141,6 +2199,99 @@ const QUICK_FULLBODY_SESSION = {
       defaultHold: "20",
       cue: "8–10 Single-Leg Calf/Soleus Raises (3s eccentric) <-> 12–15 Tibialis Raises. Rest 45s after D3.",
       holdCue: "Final Rep: 20–25s deep dorsiflexion stretch hold + 15s peak toe-pull hold"
+    }
+  ]
+};
+
+// ============================================================================
+// 1B-2. QUICK & DIRTY 35-40 MIN MOBILITY-STRENGTH SESSION (BIG END-RANGE & PNF)
+// ============================================================================
+const QUICK_MOBILITY_SESSION = {
+  id: "quick_mobility",
+  name: "🧘⚡ Quick & Dirty Mobility-Strength (35–40m • Big End-Range & PNF)",
+  category: "Dedicated Mobility",
+  legHeavy: false,
+  warmups: [
+    {
+      name: "Deep Squat Pry + 90/90 Hip Switches + Cossack-to-Runner Flow",
+      pair: "3m Express Primer",
+      sets: 1,
+      defaultReps: "30s + 6/side + 4/side",
+      cue: "Continuous 3-min flow: 30s Deep Squat Pry -> 6/side 90/90 Hip Switches -> 4/side Cossack-to-Runner Lunge -> 8 light Band/Dowel Dislocates"
+    }
+  ],
+  exercises: [
+    {
+      name: "Counterbalance Deep Cossack Squat / Assisted ATG-Pistol Bottom Pry",
+      pair: "Superset A1 (Deep Hip Flexion)",
+      sets: 2,
+      defaultReps: "5/side",
+      defaultHold: "20",
+      cue: "No rest into A2! Hold 5–10 kg plate forward (or rack post) to drop rock-bottom into deep hip & ankle flexion without fighting balance -> stay low shifting side-to-side, prying knee over toe & driving straight heel into floor",
+      holdCue: "Final Rep: 20s rock-bottom deep-hip pry per side (direct bridge to ATG/pistol bottom)"
+    },
+    {
+      name: "Weighted Shoulder Dislocates (Dowel/PVC + Plate)",
+      pair: "Superset A2 (360° Shoulders)",
+      sets: 2,
+      defaultReps: "6–8",
+      defaultHold: "15",
+      cue: "Locked elbows, narrowest clean grip w/ 1.25–5 kg plate on dowel/PVC (or heavy band): 4s slow arc overhead & behind back, pausing 3–5s at the tightest sticking zone. Rest 45s after A2.",
+      holdCue: "Final Rep: 15–20s controlled hold right at the sticky overhead/behind-back angle"
+    },
+    {
+      name: "Upright Wall Couch Stretch (Strict PPT Bias)",
+      pair: "Superset B1 (Hip Flexor PNF)",
+      sets: 2,
+      defaultReps: "3 PNF/side",
+      defaultHold: "20",
+      cue: "No rest into B2! Back foot elevated on bench/wall, squeeze rear glute FIRST (zero low-back arch) -> 8s hard back-foot drive into bench/wall -> relax & press torso upright/deeper. (Optional contrast: 4 slow Super-Deep ATG Split Squats right before Couch Stretch — or tap ⇄ Alt!)",
+      holdCue: "15–20s upright sink per PNF cycle w/ glute locked"
+    },
+    {
+      name: "Deep German Hang / Skin-the-Cat (Feet-Supported if needed)",
+      pair: "Superset B2 (Shoulder Ext)",
+      sets: 2,
+      defaultReps: "3 + 25s",
+      defaultHold: "25",
+      cue: "3 slow full Skin-the-Cat rotations into deep shoulder extension (feet-assisted on floor/box as needed to chase depth cleanly). Rest 45s after B2.",
+      holdCue: "Final Rep: 20–25s bottom German Hang in deep shoulder extension"
+    },
+    {
+      name: "Middle Split PNF (Slide-Out or Horse Stance Contract-Relax)",
+      pair: "Superset C1 (Middle Split PNF)",
+      sets: 2,
+      defaultReps: "3 PNF cycles",
+      defaultHold: "20",
+      cue: "No rest into C2! Sink to deepest wide straddle/middle split (socks/sliders or side-edge of shoes, hands on blocks/bench) -> drive feet/inner thighs HARD inward into floor for 10s -> relax & slide deeper",
+      holdCue: "20s deeper sink per PNF cycle (pelvis neutral/slight anterior tilt — tap ⇄ Alt for 90° Frog / Butterfly)"
+    },
+    {
+      name: "Deep Ring / Suspension Fly Stretch PNF (or Cambered DB Fly PNF)",
+      pair: "Superset C2 (Deep Pec/Shoulder PNF)",
+      sets: 2,
+      defaultReps: "3 PNF / 4 reps",
+      defaultHold: "20",
+      cue: "Open wide on rings/TRX (or light-mod DBs on bench) into max pec/biceps/anterior-shoulder stretch -> 6–8s hard isometric squeeze inward at end range -> sink deeper. Rest 45s after C2.",
+      holdCue: "15–20s deep crucified end-range stretch hold (zero anterior-joint pinching)"
+    },
+    {
+      name: "Elevated Front Split Isometric Scissor (\"4+1\" Protocol)",
+      pair: "Superset D1 (Front Split PNF)",
+      sets: 2,
+      defaultReps: "3 PNF/side",
+      defaultHold: "20",
+      cue: "No rest into D2! Hands on blocks/bench, pelvis strictly squared -> 3 PNF scissor cycles/side (drive front heel down & back knee forward hard for 8s -> relax & drop deeper). Tap ⇄ Alt for Seated Straddle Pancake PNF!",
+      holdCue: "15–20s deepest squared split sink / isometric hover per side"
+    },
+    {
+      name: "Elevated Gymnastic Bridge Push-Outs",
+      pair: "Superset D2 (Bridge / Thoracic)",
+      sets: 2,
+      defaultReps: "6 + 20s",
+      defaultHold: "20",
+      cue: "Hands (or feet) elevated on bench/box so the bend goes into thoracic spine & shoulders (zero lumbar pinch!) -> 5–6 deep push-outs opening armpits past wrists. Tap ⇄ Alt for Cross-Bench Deep Pullover Stretch.",
+      holdCue: "Final Rep: 20s open-chest bridge hold (push floor away hard)"
     }
   ]
 };
@@ -2322,6 +2473,7 @@ Object.keys(WORKOUT_TEMPLATES).forEach(pk => {
   if (!WORKOUT_TEMPLATES[pk].rotationOrder.includes("quick_fullbody")) {
     WORKOUT_TEMPLATES[pk].rotationOrder.push("quick_fullbody");
   }
+  WORKOUT_TEMPLATES[pk].sessions["quick_mobility"] = JSON.parse(JSON.stringify(QUICK_MOBILITY_SESSION));
   WORKOUT_TEMPLATES[pk].sessions["upper_lowerflex_combo"] = JSON.parse(JSON.stringify(UPPER_LOWERFLEX_COMBO_SESSION));
   WORKOUT_TEMPLATES[pk].sessions["custom_workout"] = JSON.parse(JSON.stringify(CUSTOM_WORKOUT_SESSION));
 });
@@ -2437,6 +2589,32 @@ const FULL_GYM_UPGRADES = {
     swapCue: "Full Gym Dumbbell Upgrade (ATG Hip Standard #2): Sit with back against wall/bench (blocks lumbar rounding), soles together, rest Dumbbells on knees -> 4s lower + 25–30s bottom groin hold",
     text: "Full Gym Dumbbell Priority: Loaded Seated Butterfly (Tap ⇄ Alt for Wall Straddle / 90° Frog PNF)",
     variant: "Loaded Seated Butterfly w/ DBs (ATG Hip #2)"
+  },
+  "Counterbalance Deep Cossack Squat / Assisted ATG-Pistol Bottom Pry": {
+    status: "swap",
+    swapTitle: "🏢 Counterbalance DB/KB Deep Cossack Squat & Pistol-Bottom Pry",
+    swapCue: "Full Gym Counterbalance Upgrade: Hold an 8–12 kg Dumbbell or Kettlebell straight out in front -> drop rock-bottom into deep hip & ankle flexion, shift side-to-side & spend 20s/side prying knee over toe + driving straight heel into floor",
+    text: "Full Gym: Use 8–12 kg DB/KB as Counterbalance (or hold rack upright)",
+    variant: "Counterbalance DB/KB Cossack / Pistol Pry (Full Gym)"
+  },
+  "Weighted Shoulder Dislocates (Dowel/PVC + Plate)": {
+    status: "native",
+    text: "Full Gym: PVC pipe or broomstick + 1.25–5 kg fractional plate (or light band)"
+  },
+  "Middle Split PNF (Slide-Out or Horse Stance Contract-Relax)": {
+    status: "native",
+    text: "Full Gym: Turf/wood floor sliders w/ hands on bench/blocks (or Isometric Horse Stance PNF)"
+  },
+  "Deep Ring / Suspension Fly Stretch PNF (or Cambered DB Fly PNF)": {
+    status: "swap",
+    swapTitle: "🏢 Deep Cambered Dumbbell Fly Stretch PNF (or Ring / Dual-Cable Fly PNF)",
+    swapCue: "Full Gym Dumbbell/Cable Upgrade: Lie on flat/low-incline bench w/ light-mod Dumbbells (or rings/TRX/cables) -> open wide into max pec/biceps stretch -> 6–8s hard isometric squeeze inward -> relax & sink deeper 15–20s",
+    text: "Full Gym: Deep Cambered DB Fly PNF or Rings/Cables (Tap ⇄ Alt)",
+    variant: "Deep Cambered DB / Ring Fly PNF (Full Gym)"
+  },
+  "Elevated Gymnastic Bridge Push-Outs": {
+    status: "native",
+    text: "Full Gym: Hands or feet elevated on plyo box / bench so extension targets shoulders & thoracic spine"
   }
 };
 
@@ -2508,7 +2686,12 @@ const EXERCISE_DEMO_LINKS = {
   "Loaded Seated Butterfly (Groin \"Knees to Floor\" — ATG Hip #2)": { url: "https://www.tiktok.com/@kneesovertoesguy/video/7150804246919826734", label: "🎥 ATG Big 5 (#2)" },
   "Floaty Birds (Feet-Anchored Prone Thoracic Extensions)": { url: "https://www.daniwinksflexibility.com/flexopedia/floaty-birds", label: "📖 Dani Winks" },
   "Arched-Back Pike Leg Lifts (Back to Wall, Hips Elevated if needed)": { url: "https://www.daniwinksflexibility.com/flexopedia/arched-back-pike-leg-lifts", label: "📖 Dani Winks" },
-  "Supine Butt-to-Wall Straddle Pancake Leg Lifts": { url: "https://www.daniwinksflexibility.com/flexopedia/butt-to-wall-straddle-pancake-leg-lifts", label: "📖 Dani Winks" }
+  "Supine Butt-to-Wall Straddle Pancake Leg Lifts": { url: "https://www.daniwinksflexibility.com/flexopedia/butt-to-wall-straddle-pancake-leg-lifts", label: "📖 Dani Winks" },
+  "Deep Squat Pry + 90/90 Hip Switches + Cossack-to-Runner Flow": { url: "https://www.youtube.com/results?search_query=deep+squat+pry+90+90+cossack+lunge+mobility+flow", label: "🎥 Demo" },
+  "Counterbalance Deep Cossack Squat / Assisted ATG-Pistol Bottom Pry": { url: "https://www.youtube.com/results?search_query=counterbalance+cossack+squat+deep+hip+mobility+pry", label: "🎥 Demo" },
+  "Weighted Shoulder Dislocates (Dowel/PVC + Plate)": { url: "https://www.youtube.com/results?search_query=weighted+shoulder+dislocates+gymnastics+mobility", label: "🎥 Demo" },
+  "Middle Split PNF (Slide-Out or Horse Stance Contract-Relax)": { url: "https://www.daniwinksflexibility.com/bendy-blog/10-minute-middle-split-and-straddle-routine", label: "📖 Dani Winks" },
+  "Deep Ring / Suspension Fly Stretch PNF (or Cambered DB Fly PNF)": { url: "https://www.youtube.com/results?search_query=ring+chest+fly+mobility+stretch+gymnastics", label: "🎥 Demo" }
 };
 
 function getDemoLinkForExercise(exName, activeAltUrl, displayTitle) {
@@ -3615,6 +3798,216 @@ const EXERCISE_ALTERNATIVES = {
         demoUrl: "https://www.youtube.com/results?search_query=dragon+flag+progression+eccentric"
       }
     ]
+  },
+  "Counterbalance Deep Cossack Squat / Assisted ATG-Pistol Bottom Pry": {
+    near: [
+      {
+        title: "Front-Foot Elevated Super-Deep ATG Split Squat",
+        cue: "Deep closed-hip + ankle + rear hip-flexor swap: Front foot on 10–20 cm step, back knee straight -> 4s lower + 20–25s bottom sink/side",
+        variant: "Front-Foot Elevated Super-Deep Split Squat",
+        demoUrl: "https://www.youtube.com/results?search_query=front+foot+elevated+atg+split+squat"
+      },
+      {
+        title: "Heels-Elevated Counterbalance Deep Squat Pry + Sotts Press",
+        cue: "Bilateral deep-hip + overhead swap: Heels on wedge/plates, hold light plate/DBs -> sit rock-bottom prying knees out + 6 slow bottom presses",
+        variant: "Counterbalance Deep Squat Pry / Sotts Press",
+        demoUrl: "https://www.youtube.com/results?search_query=sotts+press+deep+squat+mobility"
+      }
+    ],
+    far: [
+      {
+        title: "Loaded Cossack Squat (+ Hip Rotation Pivot)",
+        cue: "Active rotational Cossack swap: Goblet/plate hold -> 4s lower pivoting straight leg ER to IR + 20s hover/side",
+        variant: "Loaded Cossack Squat + Hip Pivot",
+        demoUrl: "https://www.youtube.com/results?search_query=loaded+cossack+squat+hip+mobility"
+      },
+      {
+        title: "Bench Pigeon Good Morning -> 90/90 Rear-Hip IR Lift-Offs",
+        cue: "Hip capsule ER/IR substitute (if knee flexion is irritated): 5 slow bench pigeon hinges + 15s hold -> 6 active 90/90 rear-hip IR lift-offs/side",
+        variant: "Bench Pigeon + 90/90 IR Combo",
+        demoUrl: "https://www.youtube.com/results?search_query=90+90+rear+hip+internal+rotation+lift+offs"
+      }
+    ]
+  },
+  "Weighted Shoulder Dislocates (Dowel/PVC + Plate)": {
+    near: [
+      {
+        title: "Seated / Tall-Kneeling Band Shoulder Dislocates",
+        cue: "Low-ceiling / zero-plate swap: Heavy band w/ locked elbows, narrowest clean grip -> 8 slow arcs pausing 3–5s at tightest sticking zone",
+        variant: "Band Shoulder Dislocates",
+        demoUrl: "https://www.youtube.com/results?search_query=band+shoulder+dislocates+mobility"
+      },
+      {
+        title: "Wall-Facing Overhead Shoulder Slides / Snow Angels (Ribs Stacked)",
+        cue: "Active overhead flexion swap: Back/glutes/ribs flat against wall -> slide wrists upward into full 180° flexion + 15s top hover",
+        variant: "Wall Overhead Slides (Zero Swayback)",
+        demoUrl: "https://www.youtube.com/results?search_query=wall+angels+overhead+shoulder+mobility"
+      }
+    ],
+    far: [
+      {
+        title: "Cross-Bench Deep Dumbbell / Barbell Pullover Stretch",
+        cue: "Loaded overhead lat & thoracic stretch substitute: Upper back across bench, hips dropped -> 4s lower + 25s bottom overhead hold",
+        variant: "Cross-Bench Deep Pullover Stretch",
+        demoUrl: "https://www.youtube.com/results?search_query=cross+bench+dumbbell+pullover+mobility+stretch"
+      },
+      {
+        title: "Lumbar-Blocked Bench Thoracic Meltdown + Thumbs-Up Overhead Lifts",
+        cue: "Active thoracic overhead substitute: Pin block/roller between belly & thighs -> 6–8 thumbs-up lifts + 30–45s thoracic sink",
+        variant: "Lumbar-Blocked Thoracic Meltdown",
+        demoUrl: "https://www.daniwinksflexibility.com/bendy-blog/why-your-upper-back-sucks-at-backbending-and-how-to-make-it-suck-less"
+      }
+    ]
+  },
+  "Upright Wall Couch Stretch (Strict PPT Bias)": {
+    near: [
+      {
+        title: "Super-Deep ATG Split Squat -> Rear-Foot Elevated Couch Stretch Contrast",
+        cue: "1-leg open-and-load contrast: 4 slow ultra-deep ATG split squats -> immediately 2 PNF cycles in elevated Couch Stretch on the same leg",
+        variant: "Deep Split Squat + Couch Stretch Contrast",
+        demoUrl: "https://www.tiktok.com/@kneesovertoesguy/video/7150804246919826734"
+      },
+      {
+        title: "Bench Rear-Foot Elevated Couch Stretch PNF (Knee 5–10cm Off Bench)",
+        cue: "Scaled bench setup (great when no wall available): Back foot on flat bench, squeeze glute FIRST -> 8s hard foot press -> 15–20s upright sink",
+        variant: "Bench Elevated Couch Stretch PNF",
+        demoUrl: "https://www.youtube.com/results?search_query=couch+stretch+pnf+hip+flexor"
+      }
+    ],
+    far: [
+      {
+        title: "ATG Split Squat (Light–Mod Load, 25s Bottom Hip-Flexor Sink)",
+        cue: "Dynamic loaded hip-flexor substitute: Rear knee locked straight, hams over calves -> 4 slow reps + 25s bottom stretch/side",
+        variant: "Deep Loaded ATG Split Squat",
+        demoUrl: "https://www.tiktok.com/@kneesovertoesguy/video/7150804246919826734"
+      },
+      {
+        title: "Reverse Nordic Curl Eccentric + Assisted Saddle Pose Hold",
+        cue: "Bilateral rectus-femoris substitute: Keep hips 180° locked -> 4 slow lean-backs + 20s bottom hold",
+        variant: "Reverse Nordic / Saddle Hold",
+        demoUrl: "https://www.youtube.com/results?search_query=reverse+nordic+curl+progression"
+      }
+    ]
+  },
+  "Middle Split PNF (Slide-Out or Horse Stance Contract-Relax)": {
+    near: [
+      {
+        title: "Isometric Horse Stance Squat Hold & PNF (5–7 Step Wide)",
+        cue: "Active bent-knee middle-split builder: Sink thighs toward parallel, drive knees back & feet outward hard -> 3 x 25–30s holds",
+        variant: "Isometric Horse Stance PNF",
+        demoUrl: "https://www.youtube.com/results?search_query=horse+stance+middle+split+mobility+strength"
+      },
+      {
+        title: "Wall Straddle & 90° Frog PNF Contract-Relax",
+        cue: "Low-stress groin PNF swap: Knees at 90° in frog or legs up wall -> 10s inward squeeze -> 3s relax -> 25s deeper sink",
+        variant: "90° Frog / Wall Straddle PNF",
+        demoUrl: "https://www.daniwinksflexibility.com/bendy-blog/10-minute-middle-split-and-straddle-routine"
+      }
+    ],
+    far: [
+      {
+        title: "Loaded Seated Butterfly ('Knees to Floor' — ATG Hip #2)",
+        cue: "Loaded groin opener: Back against wall/bench, soles together, DBs on knees -> 4s lower + 25–30s bottom hold",
+        variant: "Loaded Seated Butterfly (ATG #2)",
+        demoUrl: "https://www.tiktok.com/@kneesovertoesguy/video/7150804246919826734"
+      },
+      {
+        title: "Seated Straddle Pancake PNF (Flat-Spine Contract-Relax)",
+        cue: "Straddle hamstring + adductor substitute: Sit tall w/ wide legs, press heels hard into floor 8s -> pull belly forward 20s",
+        variant: "Seated Straddle Pancake PNF",
+        demoUrl: "https://www.daniwinksflexibility.com/flexopedia/straddle-pancake"
+      }
+    ]
+  },
+  "Deep Ring / Suspension Fly Stretch PNF (or Cambered DB Fly PNF)": {
+    near: [
+      {
+        title: "Deep Cambered Dumbbell Bench Fly Stretch PNF",
+        cue: "Full Gym DB swap: Flat/low-incline bench w/ light-mod DBs -> open wide into max pec/biceps stretch -> 6–8s inward iso -> 15–20s sink",
+        variant: "Cambered DB Bench Fly PNF",
+        demoUrl: "https://www.youtube.com/results?search_query=dumbbell+fly+stretch+pec+mobility"
+      },
+      {
+        title: "Dual-Cable End-Range Pec & Anterior-Shoulder Fly PNF",
+        cue: "Constant-tension cable swap: Step forward into deep pec/biceps stretch -> 8s hard inward press -> relax & sink deeper 15–20s",
+        variant: "Dual-Cable Fly Stretch PNF",
+        demoUrl: "https://www.youtube.com/results?search_query=cable+chest+fly+deep+stretch"
+      }
+    ],
+    far: [
+      {
+        title: "Single-Arm Rack / Doorway Pec & Anterior-Shoulder PNF",
+        cue: "Zero-equipment pec/shoulder PNF: Forearm on rack post at 90° & 135° -> 8s hard press into post -> rotate chest deeper 20s/side",
+        variant: "Rack/Doorway Pec PNF",
+        demoUrl: "https://www.youtube.com/results?search_query=pnf+pec+stretch+doorway+shoulder+mobility"
+      },
+      {
+        title: "Weighted Deep Dip Bottom Stretch Hold (Rings or Parallel Bars)",
+        cue: "Deep vertical shoulder-extension + pec substitute: 4 slow eccentrics + 20–25s active bottom stretch hover",
+        variant: "Deep Dip Bottom Stretch Hold",
+        demoUrl: "https://www.youtube.com/results?search_query=deep+ring+dips+parallel+bar+dips+shoulder+extension"
+      }
+    ]
+  },
+  "Elevated Front Split Isometric Scissor (\"4+1\" Protocol)": {
+    near: [
+      {
+        title: "Seated Straddle Pancake PNF (Contract-Relax + Loaded Hinge)",
+        cue: "Pancake / bilateral hamstring swap: Wide straddle w/ flat spine -> press heels hard into floor 8s -> fold belly deeper 20s (or loaded Seated Pancake GM)",
+        variant: "Seated Straddle Pancake PNF",
+        demoUrl: "https://www.daniwinksflexibility.com/flexopedia/straddle-pancake"
+      },
+      {
+        title: "Elevated Front-Foot Half-Split Hamstring PNF (Heel on Bench/Block)",
+        cue: "Scaled front-split hamstring PNF: Front heel on bench/box, hips squared -> drive heel down hard 8s -> hinge chest forward 20s/side",
+        variant: "Half-Split Hamstring PNF",
+        demoUrl: "https://www.daniwinksflexibility.com/bendy-blog/front-splits-101-anatomy-and-stretches"
+      }
+    ],
+    far: [
+      {
+        title: "Standing Elephant Walks + Loaded Pike PNF Contract-Relax",
+        cue: "Standing hamstring mobility-strength swap: Hands on floor/blocks -> 20 alternating knee-straightening reps + 20s active pike compression",
+        variant: "Elephant Walks + Pike PNF",
+        demoUrl: "https://www.youtube.com/results?search_query=elephant+walks+hamstring+flexibility+pnf"
+      },
+      {
+        title: "Arched-Back Pike Leg Lifts (Active Compression)",
+        cue: "Active hamstring-length + hip-flexor compression swap: Back flat against wall -> 8–10 straight-leg lifts + 15s end-range hover",
+        variant: "Arched-Back Pike Leg Lifts",
+        demoUrl: "https://www.daniwinksflexibility.com/flexopedia/arched-back-pike-leg-lifts"
+      }
+    ]
+  },
+  "Elevated Gymnastic Bridge Push-Outs": {
+    near: [
+      {
+        title: "Cross-Bench Deep Dumbbell / Barbell Pullover Stretch",
+        cue: "Loaded overhead & thoracic swap (zero wrist/backbend strain): Upper back across bench, hips dropped -> 4s lower + 25s bottom overhead hold",
+        variant: "Cross-Bench Deep Pullover Stretch",
+        demoUrl: "https://www.youtube.com/results?search_query=cross+bench+dumbbell+pullover+mobility+stretch"
+      },
+      {
+        title: "Bench Butcher's Block Thoracic & Lat PNF (Elbows on Bench w/ Stick)",
+        cue: "Targeted overhead/thoracic PNF: Elbows on bench holding stick/PVC, ribs tucked -> press elbows hard into bench 8s -> sink chest 20s",
+        variant: "Butcher's Block Thoracic PNF",
+        demoUrl: "https://www.youtube.com/results?search_query=butchers+block+stretch+thoracic+lat+mobility"
+      }
+    ],
+    far: [
+      {
+        title: "Lumbar-Blocked Bench Thoracic Meltdown + Thumbs-Up Overhead Lifts",
+        cue: "Anti-swayback thoracic substitute: Pin yoga block/roller between belly & thighs -> 6–8 thumbs-up lifts + 30–45s meltdown",
+        variant: "Lumbar-Blocked Thoracic Meltdown",
+        demoUrl: "https://www.daniwinksflexibility.com/bendy-blog/why-your-upper-back-sucks-at-backbending-and-how-to-make-it-suck-less"
+      },
+      {
+        title: "Tabletop / Crab Reach-Throughs (Full Anterior-Chain & Thoracic Opener)",
+        cue: "Dynamic floor bridge substitute: Press hips high in tabletop -> reach one arm up & behind opening chest & shoulders (5/side + 15s hold)",
+        variant: "Tabletop / Crab Reach-Throughs",
+        demoUrl: "https://www.youtube.com/results?search_query=crab+reach+thoracic+bridge+mobility"
+      }
+    ]
   }
 };
 
@@ -4185,10 +4578,10 @@ function classifyExerciseImpact(exName) {
     }
     s = n.includes("deadlift") ? 1.6 : 1.2; m = n.includes("deadlift") ? 0.6 : 1.5;
   }
-  if (n.includes("copenhagen") || n.includes("cossack") || n.includes("butterfly") || n.includes("frog") || n.includes("adductor") || n.includes("adduction") || n.includes("horse-stance") || n.includes("sumo")) {
+  if (n.includes("copenhagen") || n.includes("cossack") || n.includes("butterfly") || n.includes("frog") || n.includes("adductor") || n.includes("adduction") || n.includes("horse-stance") || n.includes("horse stance") || n.includes("middle split") || n.includes("sumo")) {
     ["adductors", "glute_med", "obliques", "hamstrings"].forEach(z => zones.add(z));
     ["left_hip_lat", "hip_rot", "hinge_pancake"].forEach(d => domains.add(d));
-    s = n.includes("frog") ? 0.5 : 1.2; m = 1.4;
+    s = n.includes("frog") ? 0.5 : 1.2; m = 1.5;
   }
   if (n.includes("abduction") || n.includes("abductor") || n.includes("monster walk") || n.includes("clamshell") || n.includes("step-up") || n.includes("step up") || n.includes("step-down") || n.includes("step down")) {
     ["glute_med", "glutes", "quads"].forEach(z => zones.add(z));
@@ -4220,20 +4613,25 @@ function classifyExerciseImpact(exName) {
     ["pull_cuff_grip", "overhead_bridge"].forEach(d => domains.add(d));
     s = 1.5; m = 1.0;
   }
-  if (n.includes("dip") || n.includes("push-up") || n.includes("push up") || n.includes("pushup") || n.includes("bench") || n.includes("chest press") || n.includes("chest fly") || n.includes("cable fly") || n.includes("pec-deck") || n.includes("pec deck") || n.includes("pec ") || n.includes("tricep") || n.includes("pushdown") || n.includes("pressdown") || n.includes("skullcrusher") || n.includes("jm press") || n.includes("planche") || n.includes("burpee")) {
+  if (n.includes("dip") || n.includes("push-up") || n.includes("push up") || n.includes("pushup") || n.includes("bench") || n.includes("chest press") || n.includes("chest fly") || n.includes("cable fly") || n.includes("ring fly") || n.includes("fly stretch") || n.includes("db fly") || n.includes("pec-deck") || n.includes("pec deck") || n.includes("pec ") || n.includes("tricep") || n.includes("pushdown") || n.includes("pressdown") || n.includes("skullcrusher") || n.includes("jm press") || n.includes("planche") || n.includes("burpee")) {
     ["chest", "triceps", "shoulders"].forEach(z => zones.add(z));
     ["shoulder_ext"].forEach(d => domains.add(d));
-    s = 1.4; m = n.includes("barbell flat bench") ? 0.6 : 1.2;
+    s = n.includes("fly stretch") ? 0.9 : 1.4; m = n.includes("barbell flat bench") ? 0.6 : (n.includes("fly stretch") ? 1.6 : 1.2);
   }
-  if (n.includes("skin-the-cat") || n.includes("german hang") || n.includes("tabletop") || n.includes("back lever") || n.includes("preacher") || n.includes("incline db") || n.includes("incline dumbbell") || n.includes("bayesian") || n.includes("pelican") || n.includes("bicep") || (n.includes("curl") && !n.includes("nordic") && !n.includes("hamstring") && !n.includes("leg curl") && !n.includes("jefferson") && !n.includes("wrist") && !n.includes("finger"))) {
+  if (n.includes("skin-the-cat") || n.includes("german hang") || n.includes("tabletop") || n.includes("crab reach") || n.includes("back lever") || n.includes("preacher") || n.includes("incline db") || n.includes("incline dumbbell") || n.includes("bayesian") || n.includes("pelican") || n.includes("bicep") || (n.includes("curl") && !n.includes("nordic") && !n.includes("hamstring") && !n.includes("leg curl") && !n.includes("jefferson") && !n.includes("wrist") && !n.includes("finger"))) {
     ["biceps", "shoulders", "chest", "lats"].forEach(z => zones.add(z));
     ["shoulder_ext", "pull_cuff_grip"].forEach(d => domains.add(d));
     s = 1.2; m = 1.4;
   }
-  if (n.includes("pike push") || n.includes("overhead press") || n.includes("shoulder press") || n.includes("arnold press") || n.includes("military press") || n.includes("ohp") || n.includes("lateral raise") || n.includes("upright row") || n.includes("shrug") || n.includes("handstand") || n.includes("hspu") || n.includes("z-press") || n.includes("trap-3") || n.includes("y-raise") || n.includes("bridge") || n.includes("thoracic") || n.includes("pullover") || n.includes("lat prayer")) {
+  if (n.includes("pike push") || n.includes("overhead press") || n.includes("shoulder press") || n.includes("arnold press") || n.includes("military press") || n.includes("ohp") || n.includes("lateral raise") || n.includes("upright row") || n.includes("shrug") || n.includes("handstand") || n.includes("hspu") || n.includes("z-press") || n.includes("sotts") || n.includes("trap-3") || n.includes("y-raise") || n.includes("bridge") || n.includes("thoracic") || n.includes("pullover") || n.includes("lat prayer") || n.includes("butcher") || n.includes("dislocate")) {
     ["shoulders", "traps_thoracic", "triceps", "lats"].forEach(z => zones.add(z));
     ["overhead_bridge"].forEach(d => domains.add(d));
-    s = 1.3; m = 1.4;
+    if (n.includes("dislocate")) {
+      zones.add("chest");
+      zones.add("rotator_cuff");
+      domains.add("shoulder_ext");
+    }
+    s = n.includes("dislocate") ? 0.9 : 1.3; m = n.includes("dislocate") ? 1.6 : 1.4;
   }
   if (n.includes("external rotation") || n.includes("internal rotation") || n.includes("face pull") || n.includes("rear delt") || n.includes("reverse fly") || n.includes("pull-apart") || n.includes("halo") || n.includes("rotator")) {
     ["rotator_cuff", "shoulders"].forEach(z => zones.add(z));
@@ -7219,11 +7617,11 @@ function computeRecommendation() {
   const nextUpper = getNextUpper1aVariant(appState.history);
   const baseRot = appState.phase === "1a"
     ? ["lower_1a", nextUpper, "long_run", "skill_sweep", "mobility"]
-    : phaseObj.rotationOrder.filter(sid => sid !== "quick_fullbody" && sid !== "custom_workout" && sid !== "upper_lowerflex_combo");
+    : phaseObj.rotationOrder.filter(sid => sid !== "quick_fullbody" && sid !== "quick_mobility" && sid !== "custom_workout" && sid !== "upper_lowerflex_combo");
   const sessions = phaseObj.sessions;
 
   const workoutEntries = appState.history.filter(h => h.type === "workout" && h.sessionId);
-  const adHocIds = new Set(["custom_workout", "quick_fullbody", "upper_lowerflex_combo", "outdoor_combo", "home_catchup"]);
+  const adHocIds = new Set(["custom_workout", "quick_fullbody", "quick_mobility", "upper_lowerflex_combo", "outdoor_combo", "home_catchup"]);
   const lastRotWorkout = [...workoutEntries].reverse().find(h => !adHocIds.has(h.sessionId)) || (workoutEntries.length > 0 ? workoutEntries[workoutEntries.length - 1] : null);
 
   const recentHighLegActivity = appState.history.slice(-3).reverse().find(h =>
@@ -7301,10 +7699,18 @@ function renderRecommendationAndRotation() {
   qfbBtn.onclick = () => selectSession("quick_fullbody");
   btnContainer.appendChild(qfbBtn);
 
+  const qmobBtn = document.createElement("button");
+  qmobBtn.className = "btn btn-outline btn-sm";
+  qmobBtn.style.borderColor = "rgba(168,85,247,0.7)";
+  qmobBtn.style.color = "#d8b4fe";
+  qmobBtn.textContent = "🧘⚡ Quick 35–40m Mobility-Strength (PNF)";
+  qmobBtn.onclick = () => selectSession("quick_mobility");
+  btnContainer.appendChild(qmobBtn);
+
   const customBtn = document.createElement("button");
   customBtn.className = "btn btn-outline btn-sm";
-  customBtn.style.borderColor = "rgba(168,85,247,0.6)";
-  customBtn.style.color = "#e9d5ff";
+  customBtn.style.borderColor = "rgba(45,212,191,0.55)";
+  customBtn.style.color = "#5eead4";
   customBtn.textContent = "✏️ Custom Free-Text Workout";
   customBtn.onclick = () => openCustomWorkoutSession();
   btnContainer.appendChild(customBtn);
@@ -7534,8 +7940,9 @@ function renderLocationBanner() {
       <div style="margin-bottom:6px;">Exercises below show automatic Home Gym substitutions (Sots/Z-Press, Bench Step-Down, Barbell/Plate/Band loads, Close-Grip Bench/Deficit Push-Up, Captains of Crush, Stationary Bike).</div>
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
         <button class="btn btn-success btn-xs" onclick="selectSession('upper_lowerflex_combo')">💪+🧘 Upper Strength + Lower Flex Combo</button>
+        <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.7); color:#d8b4fe;" onclick="selectSession('quick_mobility')">🧘⚡ Quick Mobility-Strength (35–40m)</button>
         <button class="btn btn-primary btn-xs" onclick="selectSession('home_catchup')">🏠 Open 15-Min Home Catch-Up (Barbell RDL + GHR + Sørensen)</button>
-        <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.55); color:#d8b4fe;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout</button>
+        <button class="btn btn-outline btn-xs" style="border-color:rgba(45,212,191,0.55); color:#5eead4;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout</button>
       </div>
     `;
   } else if (appState.location === "outdoor_gym") {
@@ -7548,8 +7955,9 @@ function renderLocationBanner() {
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
         <button class="btn btn-success btn-xs" onclick="selectSession('outdoor_combo')">🌳 Load Outdoor Full-Body Combo (Upper + BW Lower)</button>
         <button class="btn btn-primary btn-xs" onclick="selectSession('upper_lowerflex_combo')">💪+🧘 Upper Strength + Lower Flex Combo</button>
+        <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.7); color:#d8b4fe;" onclick="selectSession('quick_mobility')">🧘⚡ Quick Mobility-Strength (35–40m)</button>
         <button class="btn btn-outline btn-xs" onclick="selectSession('home_catchup')">🏠 View 15-Min Home Catch-Up List</button>
-        <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.55); color:#d8b4fe;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout</button>
+        <button class="btn btn-outline btn-xs" style="border-color:rgba(45,212,191,0.55); color:#5eead4;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout</button>
       </div>
     `;
   } else {
@@ -7562,7 +7970,8 @@ function renderLocationBanner() {
       <div style="display:flex; gap:6px; flex-wrap:wrap;">
         <button class="btn btn-success btn-xs" onclick="selectSession('upper_lowerflex_combo')">💪+🧘 Upper Strength + Lower Flex Combo</button>
         <button class="btn btn-amber btn-xs" onclick="selectSession('quick_fullbody')">⚡ Open 30–40m Quick & Dirty Full-Body (All Supersets)</button>
-        <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.65); color:#e9d5ff;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout (+ Gap Analysis)</button>
+        <button class="btn btn-outline btn-xs" style="border-color:rgba(168,85,247,0.7); color:#d8b4fe;" onclick="selectSession('quick_mobility')">🧘⚡ Quick Mobility-Strength (35–40m • PNF)</button>
+        <button class="btn btn-outline btn-xs" style="border-color:rgba(45,212,191,0.55); color:#5eead4;" onclick="openCustomWorkoutSession()">✏️ Custom Free-Text Workout (+ Gap Analysis)</button>
       </div>
     `;
   }
