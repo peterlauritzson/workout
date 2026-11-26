@@ -517,6 +517,77 @@
       color: #fff;
       border-color: #a855f7;
     }
+    .info-tip-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      font-style: italic;
+      font-family: Georgia, "Times New Roman", serif;
+      background: rgba(56, 189, 248, 0.16);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      cursor: pointer;
+      flex-shrink: 0;
+      line-height: 1;
+      padding: 0;
+    }
+    .info-tip-btn:active {
+      background: rgba(56, 189, 248, 0.35);
+      color: #fff;
+      transform: scale(0.95);
+    }
+    .form-guide-card {
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 9px;
+      font-size: 13px;
+      line-height: 1.45;
+      border: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .form-guide-card.feel {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.38);
+    }
+    .form-guide-card.cheats {
+      background: rgba(239, 68, 68, 0.09);
+      border-color: rgba(239, 68, 68, 0.36);
+    }
+    .form-guide-card.fixes {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .form-guide-card.variant {
+      background: rgba(168, 85, 247, 0.12);
+      border-color: rgba(168, 85, 247, 0.42);
+    }
+    .form-guide-card.check {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.38);
+    }
+    .form-guide-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .form-guide-list {
+      margin: 0;
+      padding-left: 17px;
+      color: #e2e8f0;
+    }
+    .form-guide-list li {
+      margin-bottom: 4px;
+    }
+    .form-guide-list li:last-child {
+      margin-bottom: 0;
+    }
     .alt-picker-box {
       margin: 6px 0 8px 0;
       padding: 9px 10px;
@@ -1301,6 +1372,24 @@
         🟧 Update &amp; Auto-Resync to Strava
       </button>
       <button class="btn btn-outline" onclick="dismissStravaIntervalModal(true)">Keep As-Is</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 7: EXERCISE CHEAT-PROOF FORM GUIDE ("i" BUTTON) -->
+<div class="modal-backdrop" id="exerciseInfoModal" onclick="if(event.target===this) closeExerciseInfoModal()">
+  <div class="modal-sheet">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;">
+      <div style="flex:1;">
+        <div id="exInfoModalTitle" style="font-weight:800; font-size:16px; color:#fff; line-height:1.25;">🛡️ Cheat-Proof Form Guide</div>
+        <div id="exInfoModalSubtitle" style="font-size:11px; color:#93c5fd; margin-top:3px; display:none;"></div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="closeExerciseInfoModal()">✕ Close</button>
+    </div>
+    <div id="exInfoModalBody"></div>
+    <div style="display:flex; gap:8px; margin-top:12px; align-items:center;">
+      <a id="exInfoModalDemoLink" href="#" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="text-decoration:none; display:none;">🎥 Demo / Guide</a>
+      <button class="btn btn-primary btn-sm" style="flex:1;" onclick="closeExerciseInfoModal()">Got It</button>
     </div>
   </div>
 </div>
@@ -2758,6 +2847,1385 @@ function getDemoLinkForExercise(exName, activeAltUrl, displayTitle) {
   if (EXERCISE_DEMO_LINKS[exName]) return EXERCISE_DEMO_LINKS[exName];
   const cleanQuery = encodeURIComponent((displayTitle || exName).replace(/[^\w\s-]/g, " ").trim() + " exercise tutorial form");
   return { url: `https://www.youtube.com/results?search_query=${cleanQuery}`, label: "🎥 Demo" };
+}
+
+// ============================================================================
+// 1C-BIS. CHEAT-PROOF FORM GUIDES ("i" BUTTON — EVERY EXERCISE + VARIANT TIPS)
+// ============================================================================
+const EXERCISE_FORM_GUIDES = {
+  // --- LOWER / HIP CENTRATION / LATERAL CORE ---
+  "Strict Side Plank (Short-Lever -> Full Isometric Hold)": {
+    feel: "Underside waist (obliques/QL) + side/back pocket of bottom glute (glute medius) — NOT neck, low back, or front hip.",
+    cheats: [
+      "Piking hips backward (butt behind shoulders) so hip flexors take over.",
+      "Letting top hip roll forward/back or sagging ribs into the bottom shoulder."
+    ],
+    fixes: [
+      "Cheat-proof setup: Put upper back, glutes & heels lightly against a wall so you cannot pike or twist.",
+      "Squeeze glutes, stack ribs over pelvis, and actively push bottom elbow into the floor (pack shoulder down).",
+      "End the hold the second your line breaks — 15–20s clean against a wall beats 45s of hanging."
+    ],
+    check: "Compare Left-down vs. Right-down hold time & shaking. Log any clear side difference."
+  },
+  "Copenhagen Plank (Side Plank Adduction)": {
+    feel: "Squarely in the top inner thigh (adductor/groin) + underside lateral core — NOT front of the hip (TFL/hip flexor).",
+    cheats: [
+      "Hips piked back or top thigh flexed slightly forward (turns into a hip-flexor hold).",
+      "Rotating chest toward the floor or letting hips sag toward the ground."
+    ],
+    fixes: [
+      "Start short-lever (knee on bench, not ankle) until 20–30s is rock-solid with straight hips.",
+      "Squeeze glutes to push hips fully forward into a straight head-to-knee/ankle line.",
+      "Keep pelvis stacked vertically (belt buckle facing straight ahead, not down)."
+    ],
+    check: "Compare Left vs. Right inner-thigh fatigue — stops the knee drifting outward."
+  },
+  "Contralateral Plate B-Stance RDL (or Band-Distracted Single-Leg RDL)": {
+    feel: "Deep, centered tension in the side/back pocket of the working glute + hamstring + inner thigh — NOT low back.",
+    cheats: [
+      "Letting pelvis twist open toward the back leg instead of loading into the front hip.",
+      "Putting 40–50% weight on the trailing foot or letting the working knee drift outward."
+    ],
+    fixes: [
+      "Keep 85–90% of weight on the front foot (back toes light like a kickstand) with front big toe glued down.",
+      "Keep both hip bones ('headlights') pointing straight down at the floor — or gently turned toward the front thigh.",
+      "Hold weight in the opposite hand and slide hips straight back without letting the working knee flare out."
+    ],
+    check: "Notice whether Left vs. Right feels harder to load squarely into the outer glute."
+  },
+  "Deep Step-Up (High Box; Rotate Mid-Range Step-Up / Step-Down)": {
+    feel: "Working glute, hamstring, quad & lateral hip control through deep flexion — NOT momentum from the floor leg.",
+    cheats: [
+      "Pushing off the trailing back foot to get started.",
+      "Letting the working hip hike up or swing out sideways, or letting the knee cave in / flare out."
+    ],
+    fixes: [
+      "Keep back toes completely light (dorsiflex ankle / lift toes off floor so you physically can't push off).",
+      "Use a slow 3–4s eccentric lowering — slow lowering exposes any lateral hip shift immediately.",
+      "Keep whole working foot heavy (big toe down), knee tracking over 2nd/3rd toe, and pelvis level."
+    ],
+    check: "Film 1 front-view set occasionally: watch for left hip hiking or swinging out."
+  },
+  "ATG Split Squat": {
+    feel: "Deep stretch in trailing hip flexor/quad + loaded front knee-over-toe ankle & centered front hip — NOT low-back pinch.",
+    cheats: [
+      "Arching low back instead of extending the rear hip, or letting rear knee bend slack.",
+      "Front heel lifting, front big toe rolling up, or front knee drifting outward to dodge hip flexion."
+    ],
+    fixes: [
+      "Keep front big toe + heel glued down; drive front knee straight over 2nd/3rd toe as far forward as clean.",
+      "Keep rear leg long and gently squeeze rear glute (stops swayback low-back arch).",
+      "At bottom: Sink -> 1–2 slow nasal exhales so pelvis drops straight down -> hold 20s cleanly."
+    ],
+    check: "If load immediately forces your pelvis higher or back-arched, drop DB weight (Position Before Load)."
+  },
+  "ATG Squat or Weighted Pistol Squat": {
+    feel: "Full knee flexion, loaded bent-knee ankles, and pelvis dropping cleanly between heels — NOT low-back tuck or shifting onto one foot.",
+    cheats: [
+      "Guarding/pulling femurs back so pelvis stays high, or shifting weight onto one foot (e.g. left).",
+      "Folding chest over with a rounded upper back or rolling off the big toes onto outer foot edges."
+    ],
+    fixes: [
+      "Keep 50/50 pressure across BOTH feet (big toe, little toe & heel heavy on both sides).",
+      "Test shoulder-width to slightly wider with ~15–25° toe-out so pelvis drops between heels rather than behind.",
+      "On light/bottom holds: Sink -> 1–2 slow nasal exhales to release hip brakes -> gently pull shins forward (tibialis on)."
+    ],
+    check: "Use a light counterbalance or small heel wedge if needed to feel true centered depth before adding load."
+  },
+  "Barbell Overhead Squat (Snatch-Grip)": {
+    feel: "Thoracic extension, active overhead shrug, hip girdle opening & ankle dorsiflexion — NOT lumbar arch or rib flare.",
+    cheats: [
+      "Flaring lower ribs and hyperextending low back to 'fake' overhead mobility.",
+      "Letting elbows unlock or bar drift forward of midfoot as you hit bottom."
+    ],
+    fixes: [
+      "Push bar actively UP toward the ceiling (upward scapular rotation) while keeping ribs stacked down.",
+      "Keep bar stacked directly over midfoot the entire descent; widen grip slightly if shoulders jam.",
+      "Use empty bar/dowel until 20s bottom hover is completely clean with flat heels."
+    ],
+    check: "Side-view check: bar stays in a vertical plumb line over midfoot at full depth."
+  },
+  "Barbell Back Squat (Low-Bar or High-Bar)": {
+    feel: "Even quad/glute drive with a rigid, stacked trunk — NOT lateral hip shift or good-morning strip out of the hole.",
+    cheats: [
+      "Subtle lateral hip shift onto one side (often left) coming out of the bottom.",
+      "Over-arching low back (swayback) on walkout instead of stacking ribs over pelvis."
+    ],
+    fixes: [
+      "Stack ribs over pelvis and brace 360° before descending; keep 50/50 tripod pressure on both feet.",
+      "Drive knees cleanly over 2nd/3rd toes without letting either knee cave in or flare unevenly.",
+      "End set or drop load immediately if a lateral hip shift appears."
+    ],
+    check: "Front-view video check every few weeks to confirm symmetrical hip drive."
+  },
+  "Barbell Conventional Deadlift": {
+    feel: "Hamstrings, glutes, lats & rigid trunk bracing — NOT low-back rounding or touch-and-go bouncing.",
+    cheats: [
+      "Yanking the bar off the floor before pulling slack out (rounds lumbar spine).",
+      "Hyperextending/leaning back into swayback at lockout instead of finishing with glutes."
+    ],
+    fixes: [
+      "Pull slack out of the bar ('squeeze oranges in armpits' with lats) so hamstrings load before bar moves.",
+      "Keep bar skimming shins/thighs; dead-stop reset each rep (zero bouncing).",
+      "Lock out tall by squeezing glutes with ribs stacked — zero backward lean."
+    ],
+    check: "If low back rounds before bar leaves floor, reduce load or check hip start height."
+  },
+  "Sissy Squat": {
+    feel: "Deep loaded stretch across front of thighs (rectus femoris) & patellar tendon — NOT sharp knee-joint pain or hip hinge.",
+    cheats: [
+      "Bending at the hips (turning it into a partial squat instead of straight-hip quad stretch).",
+      "Dropping too deep too fast without hand support."
+    ],
+    fixes: [
+      "Keep hips locked straight (180° glutes squeezed, straight line knees-to-shoulders) the entire rep.",
+      "Hold a rack/post for support and build depth gradually over weeks.",
+      "Stop 1 inch above bottom for the 20–25s hover with smooth tension."
+    ],
+    check: "Check patellar morning score next day (keep <= 3/10); regress range immediately if knees complain."
+  },
+  "Glute-Ham Raise (GHR) or Nordic Hamstring Curl": {
+    feel: "Intense hamstring tension from knee to hip — NOT cramping calves or hinged/piked hips.",
+    cheats: [
+      "Bending/hinging at the hips (butt sticking back) to make the lever way easier.",
+      "Arching low back instead of keeping glutes squeezed and ribs down."
+    ],
+    fixes: [
+      "Lock hips straight (glutes squeezed, slight posterior pelvic tilt) from knees to shoulders.",
+      "Use band or hand assist so you can truly control the 4s eccentric instead of free-falling.",
+      "Keep toes pointed or neutral if calves cramp before hamstrings."
+    ],
+    check: "Only lower as far as you can hold a dead-straight hip line."
+  },
+  "Wide-Stance Deficit RDL or Seated Pancake Good Morning": {
+    feel: "Deep stretch through proximal hamstrings & inner thighs (adductor magnus) with a flat spine — NOT low-back rounding.",
+    cheats: [
+      "Rounding the lumbar spine to get the bar/chest lower while pelvis stays stuck upright.",
+      "Bending knees too much on RDL or letting knees collapse inward on Seated Pancake."
+    ],
+    fixes: [
+      "Lead with your belly button ('abs to bench' / tip sit-bones up behind you) keeping a flat, neutral spine.",
+      "Stop the descent the exact millimeter your low back wants to round — breathe and hold THERE for 25–30s.",
+      "On Seated Pancake: push knees gently wide with toes/knees pointing up/out so adductors stay loaded."
+    ],
+    check: "Quality is measured by pelvic tilt angle with a flat back, NOT how close your nose gets to the floor."
+  },
+  "Loaded Cossack Squat (+ Hip Rotation Pivot)": {
+    feel: "Deep groin/adductor stretch on straight leg + centered hip flexion & glute work on bent leg — NOT knee cave or lifted heel.",
+    cheats: [
+      "Working heel peeling off the floor or working knee collapsing inward.",
+      "Rounding torso over to touch floor instead of dropping pelvis straight down."
+    ],
+    fixes: [
+      "Keep working heel glued flat (use a small wedge or counterbalance weight out front if needed).",
+      "Drive working knee cleanly over 2nd/3rd toe; keep chest lifted and spine long.",
+      "At bottom: actively pivot straight-leg toes skyward (ER) and gently forward (IR) without losing pelvis height."
+    ],
+    check: "Compare Left vs. Right bottom depth and groin tension — give the stiffer side extra breaths."
+  },
+  "Standing Straight-Legged Hip Abduction (Band or Cable)": {
+    feel: "Cramping/burning in the side/back pocket of BOTH glutes (standing leg stabilizes, moving leg lifts) — NOT hiking waist or front hip.",
+    cheats: [
+      "Hiking the moving hip up toward the ribs (using QL/waist instead of glute medius).",
+      "Leaning torso sideways or rotating the moving toes outward (lets hip flexor/TFL cheat)."
+    ],
+    fixes: [
+      "Keep pelvis dead level and torso tall — imagine your ribcage is frozen in place.",
+      "Keep moving foot pointing straight ahead (or tiny bit inward) and lead slightly back-and-out (~15° behind hip).",
+      "Feel the standing glute medius firing hard too — don't 'hang' into the standing hip!"
+    ],
+    check: "Compare Left vs. Right standing stability and peak height without torso lean."
+  },
+  "Deficit / Box-Assisted Dragon Squat (\"4+1\" Protocol)": {
+    feel: "Working glute medius/minimus, deep hip internal rotation & quad control — NOT knee valgus or collapsing into the knee.",
+    cheats: [
+      "Letting working knee cave violently inward without glute control.",
+      "Dropping onto the box/floor instead of hovering actively."
+    ],
+    fixes: [
+      "Use a hand support/box height where you can control the entire 4s eccentric smoothly.",
+      "Keep working big toe + heel heavy and control knee alignment over the foot.",
+      "Hover actively 1–2 cm above bottom for the 15–20s hold."
+    ],
+    check: "Compare Left vs. Right depth cleanly before lowering box height."
+  },
+  "Elevated Front Split Isometric Scissor (\"4+1\" Protocol)": {
+    feel: "Front-leg hamstring + rear-leg deep psoas/hip flexor with a squared pelvis — NOT twisted-open hips or low-back crunch.",
+    cheats: [
+      "Letting the rear hip rotate open sideways (turning a true front split into a twisted half-middle split).",
+      "Dumping into a huge swayback low-back arch to lift the torso."
+    ],
+    fixes: [
+      "Keep both hip headlights pointing straight forward; tuck rear toes under to help square the back hip.",
+      "Use yoga blocks under hands so your torso stays tall with stacked ribs (no low-back pinch).",
+      "Active scissor: gently pull front heel back and rear knee forward into the floor during the 4s pauses & 20–30s hold."
+    ],
+    check: "Square hips higher off the floor ALWAYS beats flat on the floor with twisted hips."
+  },
+  "Back Extension + Isometric Sørensen Hold (Roman Chair / Prone Arch)": {
+    feel: "Even endurance across glutes, hamstrings & spinal erectors — NOT sharp low-back crunching.",
+    cheats: [
+      "Hyperextending past horizontal (cranking into swayback at the top).",
+      "Holding breath or letting ribcage flare forward."
+    ],
+    fixes: [
+      "Set pad right below hip creases so pelvis hinges freely.",
+      "Stop strictly at a straight horizontal line (ears–shoulders–hips–ankles) with glutes squeezed and ribs stacked.",
+      "Breathe calmly through your nose during the 35–45s hold; end the second lumbar hyperextension creeps in."
+    ],
+    check: "Target: 60s clean horizontal hold without low-back pinch."
+  },
+  "Single-Leg Deficit Calf Raise + Bent-Knee Soleus <-> Wall Tibialis Raise": {
+    feel: "Deep lower-calf/Achilles stretch (especially with bent knee!) + front-shin burn on tibialis — NOT bouncing out of the bottom.",
+    cheats: [
+      "Using elastic bounce at the bottom instead of pausing in deep dorsiflexion.",
+      "Only doing straight-leg calf raises (misses bent-knee soleus needed for deep squats) or rolling onto outer foot."
+    ],
+    fixes: [
+      "Press straight through the big-toe mound at the top; sink 3s all the way into full deficit stretch.",
+      "Do a bent-knee soleus set/hold driving knee forward over toes for 25–30s — directly unlocks squat dorsiflexion!",
+      "On Wall Tibialis: keep legs straight, pull toes all the way up and hold 15s at top."
+    ],
+    check: "Compare Left vs. Right bottom ankle stretch and Achilles morning score (0–3/10)."
+  },
+  "3-Angle Deficit Jefferson Curl (Center; 45° Rotated Unloaded/Removed)": {
+    feel: "Gentle, even segmental stretch down spine & hamstrings — NEVER sharp pinching, tingling, or nerve zings.",
+    cheats: [
+      "Going too heavy (remember: never treat this like an RDL!) or hinging flat-backed instead of curling vertebra by vertebra.",
+      "Adding load to rotated (45°) sets or doing this before heavy hinging."
+    ],
+    fixes: [
+      "Always perform LAST in the session with LIGHT load only.",
+      "Tuck chin to chest first, then peel down slowly vertebra by vertebra (5s) with straight unlocked knees.",
+      "Keep rotated 45° sets completely unloaded (or stick to center only); reverse-uncurl from pelvis up."
+    ],
+    check: "Stop immediately if any sharp pain, tingling, or nerve tension appears."
+  },
+
+  // --- UPPER / SHOULDERS / TENDONS / GRIP / CORE ---
+  "Weighted Pull-Up / Chin-Up": {
+    feel: "Lats, upper back, arms & full overhead decompression in the active hang — NOT shrugged shoulders or half-reps.",
+    cheats: [
+      "Cutting the bottom short (never straightening elbows) or kipping/swinging with legs.",
+      "Flaring ribs into a banana back instead of hollowing slightly, or collapsing passively into shoulders."
+    ],
+    fixes: [
+      "Lower 4s all the way to straight elbows -> pause 3–4s in active hang (shoulders gently packed, not jammed in ears).",
+      "Keep ribs stacked over pelvis (slight hollow body) throughout.",
+      "On the final rep: drop weight if needed and hold a clean 20–30s overhead hang."
+    ],
+    check: "Full elbow extension at the bottom + chin cleanly over bar without neck craning."
+  },
+  "Weighted Deep Dip (Rings or Bars)": {
+    feel: "Pecs, triceps & controlled anterior shoulder stretch — ZERO anterior shoulder pinch or elbow pain.",
+    cheats: [
+      "Shoulders rolling forward and creeping up toward the ears at the bottom (anterior humeral glide!).",
+      "Adding external weight before owning a rock-solid 20–25s bodyweight bottom hold."
+    ],
+    fixes: [
+      "Actively depress shoulder blades (push shoulders DOWN away from ears) as you lower 4s.",
+      "Slight forward torso lean, elbows tracking back (not flared 90° out).",
+      "Build comfortable bodyweight 20–25s bottom holds before adding weight — regress depth/feet-assist if front of shoulder pinches."
+    ],
+    check: "Zero anterior shoulder or elbow pain allowed — stop hold immediately if shoulders roll forward."
+  },
+  "Feet-Elevated Inverted Row (Rings or Bar)": {
+    feel: "Upper back, rear delts, biceps & full scapular protraction stretch at the bottom — NOT hip sagging or neck jutting.",
+    cheats: [
+      "Letting hips sag into lumbar arch or shrugging shoulders up toward ears.",
+      "Bouncing off the bottom without pausing in full protraction."
+    ],
+    fixes: [
+      "Keep a rigid plank line (glutes squeezed, ribs down) from heels to shoulders.",
+      "Pull chest all the way to rings/bar (2–3s top squeeze), lower 4s, then let shoulder blades wrap cleanly forward at bottom (3s).",
+      "Final rep: 15s hold at 90° elbows + 20s protracted hang."
+    ],
+    check: "Keep neck neutral — lead with sternum, not chin."
+  },
+  "Hand-Elevated Deficit Push-Up (Weighted or Archer)": {
+    feel: "Deep horizontal chest & anterior shoulder stretch under control — NOT sagging hips or shrugging shoulders.",
+    cheats: [
+      "Low back sagging (swayback) or elbows flaring 90° straight out from shoulders.",
+      "Shoulders dumping forward toward the floor at the bottom of the deficit."
+    ],
+    fixes: [
+      "Lock a hollow/RKC plank (glutes tight, ribs stacked) from head to heels.",
+      "Keep elbows ~45° from torso, pull shoulder blades smoothly together as you sink 4s below hand level.",
+      "Hover actively 1 inch above deepest stretch for 20–30s — never relax passively onto shoulder joints."
+    ],
+    check: "Hands elevated enough to feel a genuine stretch past chest level without front-of-shoulder pinch."
+  },
+  "Barbell / EZ-Bar Preacher Curl (or KB Supinated Curl)": {
+    feel: "Deep eccentric tension in biceps & distal biceps tendon near elbow crease — NOT shoulder hitching or hyperextension snap.",
+    cheats: [
+      "Bouncing/snapping into passive elbow hyperextension at the bottom.",
+      "Lifting elbows off the pad or leaning back to swing the weight up."
+    ],
+    fixes: [
+      "Lower 4s smoothly and pause at ~95% extension (elbow straight with muscles STILL active — zero joint bounce).",
+      "Keep shoulders depressed and upper arms pinned.",
+      "Hold the final rep 20–25s at 95% extension to armor the distal biceps tendon for levers."
+    ],
+    check: "Zero sharp pain in the elbow crease; keep load light enough to own every second of the bottom hold."
+  },
+  "Barbell / KB Pullover (or Overhead Triceps Extension)": {
+    feel: "Long overhead stretch across lats & triceps long head — NOT low-back arching off the bench.",
+    cheats: [
+      "Flaring lower ribs and arching lumbar spine off the bench to fake extra overhead shoulder range.",
+      "Letting elbows flare wide out to the sides."
+    ],
+    fixes: [
+      "Pin lower back/ribs down toward the bench (feet up on bench if needed to stop swayback arch!).",
+      "Only lower as far overhead as your ribs stay stacked — pause 4s and hold final rep 20–25s right there.",
+      "Keep elbows relatively narrow and shoulders packed."
+    ],
+    check: "If ribs pop up, you've left your true shoulder flexion range — stop just before the pop."
+  },
+  "Deficit Pike Push-Up (Elevated Feet)": {
+    feel: "Delts, triceps, serratus & full 180° overhead lockout stack — NOT arching low back or flaring elbows wide.",
+    cheats: [
+      "Dropping head straight between hands (vertical drop loses leverage and jams shoulders).",
+      "Stopping short of full overhead shrug/lockout at the top."
+    ],
+    fixes: [
+      "Lower head AHEAD of hands to form a tripod (elbows stacked over wrists, ~45° angle).",
+      "Push all the way through at the top until ears sit between biceps with active upward shrug.",
+      "Hold the final rep 20s tall in full overhead lockout with ribs tucked."
+    ],
+    check: "Keep hips stacked high over shoulders — regress elevation if elbows flare out."
+  },
+  "Incline Prone Trap-3 Y-Raise (Dumbbell or Cable)": {
+    feel: "Deep burn right between/below shoulder blades (lower traps) — NOT upper-trap neck shrugging or low-back lifting.",
+    cheats: [
+      "Using heavy dumbbells and swinging with momentum or shrugging shoulders into ears.",
+      "Lifting chest off the incline bench to fake arm height."
+    ],
+    fixes: [
+      "Use very light weight (1–5 kg), keep chest glued to bench, thumbs pointed straight skyward.",
+      "Depress shoulders AWAY from ears first, then lift smoothly along a ~30–45° Y-angle (3s up, 3s pause, 4s down).",
+      "Hold final rep 20s at max end-range Y with straight elbows and quiet neck."
+    ],
+    check: "If your upper traps/neck feel it more than mid-back, drop the weight immediately."
+  },
+  "Knee-Supported Seated KB / Plate External Rotation": {
+    feel: "Deep burn in the back of the shoulder blade (infraspinatus/teres minor) — NOT wrist bending or torso twisting.",
+    cheats: [
+      "Twisting torso backward or shrugging shoulder up to lift the weight.",
+      "Dropping wrist into flexion or letting elbow slide off the knee."
+    ],
+    fixes: [
+      "Sit tall with ribs stacked, elbow anchored squarely on the raised knee, wrist dead straight.",
+      "Pivot strictly around the shoulder axis: 4s slow lower into internal rotation -> 4s pause -> smooth lift.",
+      "Keep shoulder blade flat and quiet — never lean back to finish the rep."
+    ],
+    check: "Compare Left vs. Right control and bottom range; use light weight."
+  },
+  "Side-Lying KB / Plate Internal Rotation": {
+    feel: "Deep anterior rotator cuff (subscapularis) working smoothly — NOT shoulder blade lifting off floor or shoulder rolling forward.",
+    cheats: [
+      "Letting bottom shoulder roll forward toward the ceiling as forearm lowers back into external rotation.",
+      "Using momentum or bending the wrist."
+    ],
+    fixes: [
+      "Lie on your side with bottom shoulder blade tucked flat underneath you and elbow at 90°.",
+      "Lower slowly (4s) only as far into external rotation as the shoulder stays pinned flat -> 4s pause -> 20–25s hover.",
+      "Keep wrist neutral and elbow glued to the floor."
+    ],
+    check: "Zero pinching in front of the shoulder — reduce range/load if the humeral head glides forward."
+  },
+  "Heavy Hand Gripper / Captains of Crush (Crush Grip)": {
+    feel: "Deep forearm flexor & finger crush strength — NOT wrist curling or pairing before pull-ups.",
+    cheats: [
+      "Bouncing rapid half-reps without controlled 4s eccentric opening.",
+      "Doing these before pull-ups or levers (fries grip prematurely)."
+    ],
+    fixes: [
+      "Set gripper cleanly in palm crease, crush fully closed -> 2s squeeze -> 4s slow controlled opening.",
+      "Finish with 15–20s closed hold + 20s open-hand finger extensor stretch.",
+      "Never pair with pull-ups or finger roll-outs."
+    ],
+    check: "Stop immediately if any sharp finger pulley tenderness appears."
+  },
+  "Barbell Finger Roll-Outs (Distal Fingertip Grip)": {
+    feel: "Forearm flexors & finger pulleys loaded smoothly — NOT jerky wrist flexion or bouncing on fingertips.",
+    cheats: [
+      "Dropping the bar rapidly onto fingertips (spikes pulley strain).",
+      "Pairing with pull-ups or grippers in the same superset."
+    ],
+    fixes: [
+      "Roll bar down smoothly over 4s from closed fist to distal fingertip hook -> 3s pause -> curl back up.",
+      "Final rep: steady 20–30s isometric hook hold on fingertips.",
+      "Keep wrists neutral rather than excessively bent."
+    ],
+    check: "Zero sharp A2/A4 finger-pulley pain — reduce load immediately if sore."
+  },
+  "Front Plank / RKC Plank or Hollow-Body Hold": {
+    feel: "Max-tension abs & glutes locking the rib-to-pelvis cylinder — NOT low-back sagging or hip flexors burning.",
+    cheats: [
+      "Hanging passively in swayback (low back dipping, ribs flared).",
+      "Piking butt high in the air or holding breath instead of breathing behind tension."
+    ],
+    fixes: [
+      "Tuck tailbone under (posterior pelvic tilt), squeeze glutes hard, and pull elbows toward toes (RKC).",
+      "On Hollow Hold: press low back 100% flat into the floor — bend knees/tuck legs if ANY gap appears under low back!",
+      "End the hold the exact second low back arches."
+    ],
+    check: "Quality > time: 30s of trembling, flat-back tension beats 2 min of sagging."
+  },
+  "Sit-Up (Strict / Ab-Mat / Weighted or Decline)": {
+    feel: "Rectus abdominis curling spine segmentally — NOT jerking up with hip flexors or yanking neck.",
+    cheats: [
+      "Heaving up with momentum and rigid flat back (all hip flexor, minimal abs).",
+      "Pulling on the back of your head/neck."
+    ],
+    fixes: [
+      "Exhale and curl spine up smoothly vertebra by vertebra; keep ribs pulling toward pelvis.",
+      "Own a slow 3–4s segmental eccentric roll-down back onto the floor/ab-mat.",
+      "Optional 20s hollow/mid-range isometric hold on the final rep."
+    ],
+    check: "If hip flexors burn before abs, un-anchor your feet or use a frog-leg butterfly foot position."
+  },
+  "Standing Cable / Band Pallof Press + Overhead Raise": {
+    feel: "Deep obliques, TVA & anti-rotation trunk stability — NOT torso twisting or ribs flaring on the overhead raise.",
+    cheats: [
+      "Letting hands drift back toward the cable anchor or twisting hips/shoulders.",
+      "Flaring lower ribs and arching low back as arms press overhead."
+    ],
+    fixes: [
+      "Stand tall with 50/50 foot pressure, ribs stacked over pelvis, glutes gently on.",
+      "Press straight out from center of sternum (2s) -> raise overhead (2–3s hold) keeping lower ribs pinned down.",
+      "Exhale smoothly during the overhead raise to lock the cylinder."
+    ],
+    check: "Compare Left-facing vs. Right-facing stability — great direct check on lateral core symmetry."
+  },
+  "Heavy Single-Arm KB Suitcase Carry": {
+    feel: "Opposite-side deep lateral core (obliques/QL) + glute medius firing automatically — NOT leaning away or hiking shoulder.",
+    cheats: [
+      "Leaning torso away from the weight (turns off lateral core and jams spine).",
+      "Letting loaded shoulder shrug up or letting the KB rest against your thigh."
+    ],
+    fixes: [
+      "Hold the KB 2–3 cm off your thigh, keep shoulders dead level and ribs stacked straight over pelvis.",
+      "Walk slowly with quiet, heel-to-toe midfoot steps and calm nasal breathing.",
+      "Notice: holding weight in LEFT hand fires RIGHT deep lateral core automatically!"
+    ],
+    check: "Compare Left-hand vs. Right-hand carry — whichever side wants to lean more is your priority side."
+  },
+  "Turkish Get-Up (Moderate Single KB)": {
+    feel: "360° shoulder stability, hip hinge/lunge centration & integrated trunk control — NOT rushing or collapsing bottom shoulder.",
+    cheats: [
+      "Rushing transitions, bending the overhead elbow, or shrugging the overhead shoulder.",
+      "Slumping into the supporting shoulder during the sit-up/bridge."
+    ],
+    fixes: [
+      "Keep eyes locked on the KB until standing; pack overhead shoulder tightly into the socket.",
+      "Pause 1–2s cleanly at every single checkpoint (elbow, hand, hip bridge, half-kneeling, standing).",
+      "Push the floor away firmly with the supporting hand/shoulder."
+    ],
+    check: "Move silently and smoothly — if a transition feels clunky, drop weight and own the step."
+  },
+  "Barbell / Landmine 180s (Rotational Torque)": {
+    feel: "Obliques decelerating & driving controlled trunk rotation — NOT twisting through the lumbar spine with locked feet.",
+    cheats: [
+      "Dropping the bar rapidly into the hip without braking, or bending elbows to muscle it with arms.",
+      "Hyperextending low back as the bar passes overhead."
+    ],
+    fixes: [
+      "Keep arms long (soft elbows), ribs stacked down, and pivot hips/feet smoothly with the arc.",
+      "Brake the bar cleanly at hip height with your obliques before driving back over the top.",
+      "Keep torso tall — zero swayback arch at top."
+    ],
+    check: "Control both directions symmetrically (Left vs. Right braking)."
+  },
+
+  // --- MAX STRENGTH BARBELL LIFTS ---
+  "Barbell Flat Bench Press (Paused)": {
+    feel: "Pecs, triceps & tight upper-back arch — NOT bouncing off chest or shoulders rolling forward.",
+    cheats: [
+      "Bouncing the bar off sternum or letting elbows flare 90° straight out.",
+      "Losing upper-back tightness so shoulders roll up off the bench."
+    ],
+    fixes: [
+      "Pin shoulder blades down and back into the bench; plant both feet evenly with gentle leg drive.",
+      "Lower under control to lower chest/sternum with elbows ~45–60°, hold a crisp 1s dead-stop pause, then press.",
+      "Keep wrists stacked directly over elbows."
+    ],
+    check: "Every rep touches the exact same spot with a real pause."
+  },
+  "Barbell Overhead Press (OHP Strict)": {
+    feel: "Delts, triceps & stacked vertical core — NOT leaning way back into swayback (turning it into an incline bench!).",
+    cheats: [
+      "Flaring ribs and hyperextending low back as the bar clears the forehead.",
+      "Using leg bounce (push press) or stopping short of full stacked lockout."
+    ],
+    fixes: [
+      "Squeeze glutes and stack ribs down BEFORE unracking and pressing (anti-swayback brace).",
+      "Keep bar close to face, move head slightly back then straight through the 'window' at lockout.",
+      "Finish with bar stacked directly over ears, shoulders, hips & midfoot."
+    ],
+    check: "If low back arches to finish a rep, the load is above strict OHP form."
+  },
+  "Barbell Pendlay Row (Strict Dead-Stop from Floor)": {
+    feel: "Lats, rhomboids & mid-back explosive pull from a rock-solid horizontal hinge — NOT standing up to heave the bar.",
+    cheats: [
+      "Rising torso angle 20–30° on every rep (body English) or rounding lumbar spine.",
+      "Touch-and-go bouncing instead of full dead-stop."
+    ],
+    fixes: [
+      "Set back nearly parallel to the floor with neutral spine and loaded hamstrings.",
+      "Pull explosively to lower chest/upper abs keeping torso angle completely frozen.",
+      "Return to a full dead-stop on the floor every single rep."
+    ],
+    check: "Torso shouldn't bob up and down — lower weight if you have to heave."
+  },
+
+  // --- CALISTHENICS & STRAIGHT-ARM SKILLS ---
+  "Freestanding Straight Handstand": {
+    feel: "Stacked bone-on-bone vertical line (wrists–shoulders–hips–ankles) & active fingertip balance — NOT banana back.",
+    cheats: [
+      "Arching into a swayback 'banana' line because shoulders aren't fully open 180°.",
+      "Grinding fatigued sloppy attempts past form breakdown."
+    ],
+    fixes: [
+      "Push tall through shoulders (ears covered by arms), tuck lower ribs in, squeeze glutes & point toes.",
+      "Balance through fingertips (press fingers down to stop falling over; heel of palm if falling back).",
+      "Keep sessions short (~5 min) and stop ~5s shy of form breakdown."
+    ],
+    check: "Side-view video check: straight vertical line from wrists through shoulders, hips & ankles."
+  },
+  "Handstand Walking (Forward / Pivot)": {
+    feel: "Controlled side-to-side weight shifts over stacked shoulders — NOT frantic falling forward in a banana arch.",
+    cheats: [
+      "Falling forward uncontrollably and chasing your hands with arched low back.",
+      "Bending elbows to catch balance."
+    ],
+    fixes: [
+      "Keep elbows locked straight and shoulders pushed tall; shift weight cleanly onto one hand before lifting the other.",
+      "Take small, deliberate steps rather than huge lunges.",
+      "Keep ribs/pelvis stacked in hollow."
+    ],
+    check: "Prioritize slow, controlled 2–3 step walks over fast banana-back sprints."
+  },
+  "Deficit Handstand Push-Up (HSPU)": {
+    feel: "Delts, triceps & stacked hollow line pressing smoothly from deep deficit — NOT flared elbows or extreme banana arch.",
+    cheats: [
+      "Flaring elbows straight out sideways or collapsing head straight between hands.",
+      "Over-arching low back against the wall."
+    ],
+    fixes: [
+      "Lower head forward of hands into a strong tripod with forearms vertical.",
+      "Keep hollow body/glutes engaged and press all the way to full shoulder elevation lockout.",
+      "Use chest-to-wall or partial deficit height until full ROM is clean."
+    ],
+    check: "Full lockout + controlled eccentric before increasing deficit height."
+  },
+  "Full Gymnastic Front Lever": {
+    feel: "Lats, straight-arm shoulder depression & rigid hollow core — NOT bent elbows or piked hips.",
+    cheats: [
+      "Micro-bending elbows (takes load off straight-arm tendons) or piking hips to shorten lever.",
+      "Rushing straight-arm progression too fast (tendon-limited skill!)."
+    ],
+    fixes: [
+      "Lock elbows 100% straight, depress shoulder blades down toward hips, and squeeze glutes into a flat line.",
+      "Use a clean regression (tuck / advanced tuck / single-leg / straddle) you can hold 6–12s cleanly.",
+      "Keep doses small and consistent — tendons adapt over months, not days."
+    ],
+    check: "Side-view check: hips strictly level with shoulders and zero elbow bend."
+  },
+  "Full Gymnastic Back Lever (Pronated Grip)": {
+    feel: "Posterior chain, chest/anterior shoulder & lats in a straight horizontal line — ZERO elbow/biceps tendon pain.",
+    cheats: [
+      "Using supinated grip prematurely (extreme distal biceps tendon stress!) or sagging hips.",
+      "Rushing into full lay before owning a 30s comfortable German Hang."
+    ],
+    fixes: [
+      "Strictly use PRONATED grip (palms down/back) — never rush supinated.",
+      "Keep elbows locked straight, protract/depress shoulders slightly, and hold a flat body line.",
+      "Regress to tuck/straddle immediately if shoulders roll forward or elbows ache."
+    ],
+    check: "Zero distal biceps or elbow-crease tenderness — tendon runway is multi-month."
+  },
+  "Strict Dragonflag": {
+    feel: "Entire anterior core (abs/serratus) & lats holding a rigid steel rod from shoulders to toes — NOT piking hips or resting on low back.",
+    cheats: [
+      "Bending at the hips (piking) on the way down so low back hits the bench first.",
+      "Dropping fast out of control on the bottom half."
+    ],
+    fixes: [
+      "Weight rests ONLY on upper back/shoulders (never neck!).",
+      "Squeeze glutes hard to lock hips dead straight; use tuck or single-leg regression until the lower half is slow and flat.",
+      "Brace ribs down and control a 3–4s eccentric."
+    ],
+    check: "If hips bend, regress immediately to single-leg or straddle dragonflag."
+  },
+  "Standing Straight-Leg Ab Wheel Rollout": {
+    feel: "Intense anti-extension abs & lats — ZERO low-back sagging.",
+    cheats: [
+      "Letting pelvis/low back sag into swayback at full extension.",
+      "Piking hips up first on the return instead of pulling with abs/lats."
+    ],
+    fixes: [
+      "Start with a strong posterior pelvic tilt (tailbone tucked, glutes squeezed, hollow back) BEFORE rolling out.",
+      "Use a wall/ramp stop to limit range to the exact distance you can hold a tucked pelvis.",
+      "Keep elbows straight and lats engaged pushing down into the wheel."
+    ],
+    check: "End the rep early the millisecond your low back loses its hollow tuck."
+  },
+  "Strict Gymnastics Ring Muscle-Up": {
+    feel: "Explosive false-grip pull, tight chest-to-ring transition & smooth dip — NOT kipping or chicken-winging one arm.",
+    cheats: [
+      "Using a big leg kip or letting one elbow flip up before the other ('chicken wing').",
+      "Losing false grip before the transition."
+    ],
+    fixes: [
+      "Lock a deep false grip (wrist crease over ring) and keep rings glued tight to chest/armpits during transition.",
+      "Keep legs straight and quiet; train slow low-ring transitions if one arm leads.",
+      "Respect elbow tendon load — small high-quality doses only."
+    ],
+    check: "Symmetrical two-arm transition with zero elbow pain."
+  },
+  "Strict One-Arm Chin-Up (Left & Right)": {
+    feel: "Extreme lat, biceps & scapular depression strength — ZERO medial elbow/biceps tendon flare-ups.",
+    cheats: [
+      "Spinning/twisting uncontrollably or shrugging shoulder straight into the ear at the bottom.",
+      "Jumping progression too fast (tendon-limited skill)."
+    ],
+    fixes: [
+      "Initiate every rep by packing the shoulder blade DOWN before bending the elbow.",
+      "Use measurable assistance (pulley/counterweight, fingers on band/towel) and train both Left & Right evenly.",
+      "Stay sub-maximal (RPE <= 7–8) to protect elbow tendons."
+    ],
+    check: "Stop immediately if medial elbow (golfer's elbow) irritation shows up."
+  },
+  "Strict One-Arm Push-Up (Feet Together)": {
+    feel: "Working pec, triceps & massive anti-rotation core stability — NOT twisting hips sideways or flaring elbow 90°.",
+    cheats: [
+      "Rotating pelvis/torso 45° open to turn it into a side-push.",
+      "Swayback low-back sag or elbow winging straight out."
+    ],
+    fixes: [
+      "Keep hips and shoulders square to the floor; lock glutes + abs tight.",
+      "Track elbow ~30–45° from ribs (not straight out) and elevate hand on a box/bench to scale cleanly.",
+      "Press evenly through the whole palm."
+    ],
+    check: "Use an elevated surface where hips stay 100% square before lowering to the floor."
+  },
+
+  // --- DEDICATED MOBILITY / PNF / PRIMERS ---
+  "Deep Squat Pry + 90/90 Hip Switches": {
+    feel: "Hip sockets lubricating smoothly in IR/ER + ankles & groin opening — NOT slumping lumbar spine.",
+    cheats: [
+      "Rushing through switches with momentum or collapsing chest onto thighs in the squat pry.",
+      "Leaning way back onto hands during 90/90 switches instead of moving from the hips."
+    ],
+    fixes: [
+      "In Squat Pry: hold an 8–12 kg counterbalance in front, drive elbows into knees, rock gently side-to-side with 3–5 slow exhales.",
+      "In 90/90 Switches: stay as upright as possible and initiate by lifting the trail knee first (active hip rotation).",
+      "Keep 50/50 foot pressure in the pry — don't shift onto one hip."
+    ],
+    check: "Notice which side's 90/90 transition feels sticky — linger 10s longer there."
+  },
+  "Deep Squat Pry + 90/90 Hip Switches + Skin-the-Cat / Dislocates": {
+    feel: "Full-body joint prep: hips, ankles & 360° shoulders warming up smoothly — NOT forcing cold end range.",
+    cheats: [
+      "Bending elbows on dislocates or rushing Skin-the-Cat into a passive joint drop.",
+      "Holding breath or shifting unevenly in the squat pry."
+    ],
+    fixes: [
+      "Squat Pry: counterbalance weight in front, elbows pressing knees wide, slow nasal exhales.",
+      "Dislocates: lock elbows straight, elevate shoulders gently over the top, widen grip if shoulders clunk.",
+      "Skin-the-Cat: move slow with feet-assist if needed; pause 15s smoothly in German Hang without elbow pinch."
+    ],
+    check: "Treat as smooth lubrication — zero joint forcing."
+  },
+  "Deep Squat Pry + 90/90 Hip Switches + Cossack-to-Runner Flow": {
+    feel: "Hips, adductors, hip flexors & ankles opening smoothly in a continuous wave — NOT rushed reps.",
+    cheats: [
+      "Bouncing through transitions or letting working heel lift during Cossack.",
+      "Arching low back in the Runner Lunge instead of gently tucking tailbone."
+    ],
+    fixes: [
+      "Spend 3–5 slow exhales at the bottom of the pry and sink 5s at each end-range position.",
+      "Keep working heel glued down in Cossack and back knee long in Runner Lunge.",
+      "Stay tall through the spine on every transition."
+    ],
+    check: "Notice if one hip opens more slowly — give it an extra slow exhale."
+  },
+  "Cat-Cow Segmental Waves + World's Greatest Stretch (Lunge + Thoracic Reach)": {
+    feel: "Individual spine segments moving cleanly + thoracic rotation + hip flexor opening — NOT hinging only at low back.",
+    cheats: [
+      "Snapping entire spine at once in Cat-Cow (only moving lumbar hinge).",
+      "Twisting hips in World's Greatest Stretch instead of rotating from the upper back."
+    ],
+    fixes: [
+      "In Cat-Cow: initiate from tailbone and ripple slowly one vertebra at a time up to the neck.",
+      "In World's Greatest Stretch: lock back knee straight, keep hips square, and exhale deeply as you reach chest/arm skyward.",
+      "Sink 5s on the exhale at each end range."
+    ],
+    check: "Keep front heel flat and knee over foot in the lunge."
+  },
+  "Cossack-to-Runner Lunge Flow (Unloaded)": {
+    feel: "Groin/adductors, hip IR/ER & front hip flexor opening smoothly — NOT collapsing knee inward.",
+    cheats: [
+      "Popping hips high during the transition instead of staying low.",
+      "Lifting working heel or overarching low back in the runner lunge."
+    ],
+    fixes: [
+      "Stay low as you pivot from Cossack into Runner Lunge, using fingertips lightly on floor for balance if needed.",
+      "Keep front heel flat in Cossack and gently squeeze back glute in Runner Lunge.",
+      "Pause 5s with a long exhale in each position."
+    ],
+    check: "Compare fluidity Left vs. Right."
+  },
+  "Counterbalance Deep Cossack Squat / Assisted ATG-Pistol Bottom Pry": {
+    feel: "Deep one-sided hip-girdle opening, groin stretch & ankle dorsiflexion — NOT collapsed heel or rounded collapse.",
+    cheats: [
+      "Holding a fixed post while hanging behind your heel (hides balance).",
+      "Letting working knee cave inward or heel peel off the floor."
+    ],
+    fixes: [
+      "Hold an 8–12 kg counterweight straight out in front so your center of mass actually balances over your midfoot.",
+      "Sink -> take 2 slow nasal exhales so pelvis drops straight down -> gently pry knee out/forward over 2nd/3rd toe.",
+      "Keep working heel glued down the entire 20s hold."
+    ],
+    check: "Over weeks, bring counterweight closer to chest as hip girdle & ankles open."
+  },
+  "Upright Wall Couch Stretch (Strict PPT Bias)": {
+    feel: "Deep intense stretch down front of thigh & upper hip crease (psoas/rectus femoris) — ZERO low-back arch.",
+    cheats: [
+      "Arching low back (swayback!) to get torso upright against the wall — completely fakes the hip-flexor stretch!",
+      "Letting front hip twist open sideways."
+    ],
+    fixes: [
+      "Tuck tailbone under FIRST (posterior pelvic tilt) and squeeze the rear glute hard BEFORE lifting your torso.",
+      "Keep ribs stacked over pelvis — lean slightly forward on blocks/floor if lifting upright makes your low back arch!",
+      "PNF: press back foot gently into wall 5s -> relax -> exhale deeper keeping strict PPT."
+    ],
+    check: "If you feel your low back more than the front of your thigh/hip, lean slightly forward and re-tuck pelvis."
+  },
+  "Saddle Pose (Reclining Hero / Supta Virasana)": {
+    feel: "Long, deep passive stretch across quads, rectus femoris & front of ankles — ZERO knee pain or low-back pinch.",
+    cheats: [
+      "Dumping into a huge swayback arch so ribs flare skyward and low back crunches.",
+      "Forcing knees apart or pushing through sharp knee-joint pressure."
+    ],
+    fixes: [
+      "Tuck tailbone gently under (squeeze glutes slightly) as you recline; elevate torso on a bolster/bench if tight.",
+      "Keep knees hip-width (use a light strap/band around thighs if knees splay wide).",
+      "Use Half-Saddle (one leg straight) if full Saddle bothers either knee, and breathe slow nasal exhales."
+    ],
+    check: "Skip or regress to Half-Saddle/bolster immediately if knees complain."
+  },
+  "Wall Straddle & 90° Frog PNF Contract-Relax": {
+    feel: "Deep inner-thigh/adductor opening & pelvis dropping freely — NOT low-back rounding/tucking.",
+    cheats: [
+      "Letting low back round/tuck under when rocking back in 90° Frog (takes tension off adductors).",
+      "Holding breath and fighting the stretch with tense muscles."
+    ],
+    fixes: [
+      "In 90° Frog: keep a neutral/slightly arched low back and rock hips slowly backward — stop the instant low back wants to tuck!",
+      "PNF cycle: gently press knees down into floor for 8–10s (30–50% effort) -> exhale completely -> sink 1 cm deeper.",
+      "In Wall Straddle: scoot butt flush to wall, keep knees straight and let gravity do the work."
+    ],
+    check: "90° Frog rock-backs directly build the knees-out pelvis drop needed for deep ATG squats."
+  },
+  "Loaded Seated Butterfly (Groin \"Knees to Floor\" — ATG Hip #2)": {
+    feel: "Short-groin adductors (brevis/pectineus) opening cleanly — NOT rounded-slumped low back.",
+    cheats: [
+      "Slumping into a C-shaped low back with pelvis rolled backward (blocks hip opening).",
+      "Forcing heavy dumbbells onto knees while hip sockets grip/guard."
+    ],
+    fixes: [
+      "Sit on a yoga block or folded mat if your low back rounds — pelvis MUST sit upright/slightly tipped forward!",
+      "Use light DBs on knees, actively pull knees down with outer glutes + 4s slow lowering.",
+      "Take slow nasal exhales during the 25–30s bottom sink so groin actually lets go."
+    ],
+    check: "Upright spine on a block with knees higher beats slumped spine on the floor."
+  },
+  "Middle Split PNF (Slide-Out or Horse Stance Contract-Relax)": {
+    feel: "Deep adductor magnus & gracilis opening along inner thighs — ZERO sharp outer-hip pinching.",
+    cheats: [
+      "Letting hips drift way behind the line of heels (turns it into a frog/pancake hybrid).",
+      "Pinching outer hip bone (femoral neck impingement) because pelvis isn't tilted slightly forward."
+    ],
+    fixes: [
+      "Keep hips strictly in line between heels (don't sit way back behind feet).",
+      "Tip pelvis slightly forward (slight anterior pelvic tilt / 'tailbone back') — clears outer-hip pinch immediately!",
+      "PNF: gently squeeze feet inward into floor 5–8s -> exhale -> slide 1–2 cm wider while staying active."
+    ],
+    check: "Never push through sharp bony outer-hip pinch — tilt pelvis forward or rotate toes slightly up."
+  },
+  "Bench Pigeon Good Morning (Unloaded or Light Plate Only)": {
+    feel: "Deep posterior hip capsule & glute/piriformis stretch on front leg — ZERO knee twist or low-back rounding.",
+    cheats: [
+      "Letting the front knee torque/twist instead of rotating from the hip.",
+      "Rounding upper/lower back to reach head toward foot instead of hinging at the hip."
+    ],
+    fixes: [
+      "Keep front ankle flexed (protect knee) and adjust shin angle/bench height so zero knee pain occurs.",
+      "Keep hips squared (don't let back hip roll open) and hinge with a flat spine — chest toward shin.",
+      "Unloaded or light plate ONLY; linger longer on whichever hip feels tighter (often Left!)."
+    ],
+    check: "Directly opens the posterior hip capsule needed for clean squat depth."
+  },
+  "Seated 90/90 Rear-Hip Internal Rotation Lift-Offs & Hold": {
+    feel: "Deep cramping/working sensation on the side/inside of the rear hip (internal rotators) — NOT torso leaning away.",
+    cheats: [
+      "Leaning torso far over the front leg to 'cheat' the rear ankle off the floor.",
+      "Rolling pelvis backward instead of pivoting strictly inside the rear hip socket."
+    ],
+    fixes: [
+      "Stay upright (even a slight lean away is fine if you can't budge it yet, but freeze torso position!).",
+      "Keep rear knee pinned into the floor and try to hover ONLY the rear ankle/shin off the ground.",
+      "Even a 1 mm lift — or isometric max effort against the floor — builds real internal rotation!"
+    ],
+    check: "Compare Left vs. Right lift height & cramping — give the weaker/stiffer hip 1 extra hold."
+  },
+  "Deep Hip-Crease Lizard Lunge PNF (+ Optional Banded Hip-Capsule Glide)": {
+    feel: "Deep posterior hip-capsule glide & front hip-crease clearance + rear hip flexor — NOT pinching front of hip.",
+    cheats: [
+      "Forcing front knee straight into a bony front-hip pinch instead of giving it space.",
+      "Collapsing lumbar spine or letting front foot roll off the floor."
+    ],
+    fixes: [
+      "Keep front foot flat (big toe heavy); gently pry front knee slightly out/forward over toes.",
+      "If using a band: anchor low/lateral high in the front hip crease to gently glide the femur back/out.",
+      "PNF: gently press front foot into floor 5s -> exhale -> sink hips straight down."
+    ],
+    check: "Should make your deep squat feel immediately smoother right afterward."
+  },
+  "Loaded Bent-Knee Ankle / Calf Dorsiflexion PNF (Knee-Over-Toe)": {
+    feel: "Deep stretch low in the back of the ankle/Achilles (soleus) — NOT sharp pinching in the front of the ankle.",
+    cheats: [
+      "Letting the heel peel up off the floor/box (fakes extra knee travel).",
+      "Letting the knee collapse inward (pronation) instead of tracking over toes."
+    ],
+    fixes: [
+      "Keep heel 100% glued down; place DB/KB on top of knee and drive knee straight over 2nd/3rd toe.",
+      "PNF: press ball of foot down into floor (gas pedal) 5–8s -> relax -> exhale and pull shin further forward with tibialis.",
+      "If front of ankle pinches, add a low band pulling backward across the front ankle crease."
+    ],
+    check: "Compare Knee-to-Wall distance Left vs. Right (target 10–13+ cm barefoot)."
+  },
+  "Lumbar-Blocked Bench Thoracic Meltdown + Thumbs-Up Overhead Lifts (+ Wrist Ext.)": {
+    feel: "Opening through mid/upper back (T-spine) & lats — ZERO low-back arching.",
+    cheats: [
+      "Dropping belly toward the floor so all the 'extension' happens in the low back (swayback cheat!).",
+      "Letting elbows flare wide off the bench."
+    ],
+    fixes: [
+      "Pin a yoga block/pillow between your belly & thighs (or sit hips back on heels) so lumbar spine stays 100% locked!",
+      "Exhale and let ONLY your upper chest/armpits melt toward the floor (30–45s).",
+      "For Thumbs-Up Lifts: keep chest low and lift straight arms with lower traps — zero neck shrug."
+    ],
+    check: "Directly fixes 'folding over' in squats and overhead positions."
+  },
+  "Bench Butcher's Block Thoracic & Lat PNF (Elbows on Bench w/ Stick)": {
+    feel: "Deep stretch through lats, triceps & upper thoracic spine — NOT low-back arching.",
+    cheats: [
+      "Arching lower back instead of keeping ribs tucked.",
+      "Elbows slipping super wide apart on the bench."
+    ],
+    fixes: [
+      "Keep elbows shoulder-width on bench holding a dowel/stick; tuck tailbone & stack ribs down first.",
+      "PNF: press elbows gently DOWN into the bench for 5–6s -> exhale fully -> sink chest lower and bring hands behind head.",
+      "Keep neck relaxed between arms."
+    ],
+    check: "Great prep right before Overhead Squats, Handstands, or Bridge Push-Outs."
+  },
+  "Deep German Hang / Skin-the-Cat (Feet-Supported if needed)": {
+    feel: "Deep open stretch across anterior shoulders, pecs & distal biceps — ZERO sharp joint or elbow-crease pain.",
+    cheats: [
+      "Dropping uncontrollably into full bodyweight hang before shoulders/biceps are ready.",
+      "Letting elbows bend awkwardly or shrugging violently."
+    ],
+    fixes: [
+      "Keep feet lightly supported on floor/box if needed so you control exact stretch intensity (RPE <= 6).",
+      "Rotate shoulders smoothly backward with straight arms and calm nasal breathing for 20–30s.",
+      "Always warm up shoulders first; come out cleanly or step down smoothly."
+    ],
+    check: "Comfortable 30s German Hang is the prerequisite before progressing Back Lever."
+  },
+  "Weighted Shoulder Dislocates (Dowel/PVC + Plate)": {
+    feel: "Smooth 360° shoulder capsule mobility & pec/anterior delt stretch — NOT rib flaring or bent elbows.",
+    cheats: [
+      "Bending one elbow to sneak over the sticky point (hides shoulder asymmetry!).",
+      "Flaring ribs and arching low back as the bar passes overhead."
+    ],
+    fixes: [
+      "Lock BOTH elbows 100% straight and keep ribs stacked over pelvis (kneeling/seated keeps lumbar honest).",
+      "Actively elevate (shrug) shoulders UP as the bar passes overhead to clear the joint cleanly.",
+      "Use a wide enough grip that there's zero clunking — narrow hands gradually over weeks."
+    ],
+    check: "Watch in a mirror or feel if one arm bends or leads ahead of the other."
+  },
+  "Deep Ring / Suspension Fly Stretch PNF (or Cambered DB Fly PNF)": {
+    feel: "Wide, deep stretch across pecs & anterior shoulder capsule — ZERO sharp pinch in front of shoulder.",
+    cheats: [
+      "Dropping hips into swayback arch or letting shoulders roll forward toward ears.",
+      "Going too deep/heavy passively without active pec engagement."
+    ],
+    fixes: [
+      "Keep a slight soft bend in elbows, shoulder blades gently retracted/depressed, and core braced.",
+      "PNF: gently squeeze rings/DBs inward 5s (30–50% effort) -> exhale -> open 1–2 cm wider and hold 30–45s.",
+      "Keep ribcage stacked — don't flare chest to fake range."
+    ],
+    check: "Should feel broad across the chest, never pinchy in the front shoulder joint."
+  },
+  "Standing Band / Bodyweight Psoas March (Above 90° Hip Flexion)": {
+    feel: "Deep hip flexor (psoas) burning above hip crease + standing glute stabilizing — NOT leaning back or hiking hip.",
+    cheats: [
+      "Leaning torso backward or rounding low back to hoist the knee higher.",
+      "Hanging passively into the standing hip (letting standing hip pop out sideways)."
+    ],
+    fixes: [
+      "Stand with back lightly against a wall (or tall upright stack) so you physically cannot lean back!",
+      "Squeeze the STANDING glute hard so your standing hip stays tall and centered.",
+      "Lift moving knee strictly ABOVE hip crease (90°+) -> pause 3s -> 15–20s peak hold on final rep."
+    ],
+    check: "Compare Left vs. Right standing hip stability and peak lift height."
+  },
+  "Floaty Birds (Feet-Anchored Prone Thoracic Extensions)": {
+    feel: "Upper-back thoracic erectors & lower traps working smoothly — NOT crunching low back or lifting feet off floor.",
+    cheats: [
+      "Bending/cranking from the low back while belly relaxes into the floor.",
+      "Feet popping off the floor or shoulders shrugging into ears."
+    ],
+    fixes: [
+      "Glue tops of feet into floor, squeeze glutes, and brace belly lightly ('draw belly button off floor').",
+      "Lift sternum/upper chest (not chin!) and sweep straight arms smoothly overhead with thumbs up.",
+      "Hold final rep 10–15s breathing calmly without low-back pinch."
+    ],
+    check: "If you feel it only in your low back, lower chest height and re-brace glutes/abs."
+  },
+  "Elevated Gymnastic Bridge Push-Outs": {
+    feel: "Thoracic extension & shoulders opening past wrists — ZERO sharp lumbar pinching.",
+    cheats: [
+      "Hinging all the bend into the low back while shoulders stay way behind the wrists.",
+      "Elbows bending or feet turning way out while glutes turn off."
+    ],
+    fixes: [
+      "Elevate hands (or feet depending on focus) so you can lock elbows 100% straight.",
+      "Drive through legs to push your CHEST/ARMPITS past your wrists (opens shoulders & T-spine, spares low back).",
+      "Keep glutes engaged and breathe smoothly during the 20–30s terminal push-out hold."
+    ],
+    check: "Side-view photo check: aim for shoulders stacking directly over or past wrists (180°+)."
+  },
+  "Arched-Back Pike Leg Lifts (Back to Wall, Hips Elevated if needed)": {
+    feel: "Intense quad & deep hip-flexor compression right at hip crease — NOT slumping low back flat into the wall.",
+    cheats: [
+      "Rounding low back into the wall (makes lifting legs easy but skips true hip-crease compression).",
+      "Bending the lifting knee."
+    ],
+    fixes: [
+      "Sit against a wall (elevate hips on a block if tight) and deliberately keep a small ARCH in your low back away from the wall.",
+      "Lock knee 100% straight, point toes, and lift leg straight up without letting low back flatten into the wall.",
+      "Hold final rep 5–10s at max height (even 2 cm off the floor works!)."
+    ],
+    check: "Cramping in front of thighs/hip crease is normal — it means you're hitting true end-range compression."
+  },
+  "Supine Butt-to-Wall Straddle Pancake Leg Lifts": {
+    feel: "Deep psoas, groin & active pancake compression pulling legs toward face — NOT tailbone curling off floor.",
+    cheats: [
+      "Curling tailbone/low back way off the floor to yank legs closer.",
+      "Bending knees instead of keeping legs locked straight."
+    ],
+    fixes: [
+      "Scoot butt completely flush against the wall with legs wide in a straddle and low back heavy on floor.",
+      "Keep knees locked straight and pull heels off the wall toward your face (2s hold per rep, 10s final hold).",
+      "Keep ribs heavy and breathe — zero neck straining."
+    ],
+    check: "Even a tiny hover off the wall builds massive active pancake strength."
+  },
+  "Supine Legs-Up Nasal Box Breathing": {
+    feel: "Ribcage expanding 360° and softening down on long exhales, nervous system down-regulating — NOT chest/neck gasping.",
+    cheats: [
+      "Breathing high into chest/neck or rushing the exhale.",
+      "Letting low back arch off the floor."
+    ],
+    fixes: [
+      "Rest calves on a bench/wall with knees/hips ~90° so low back melts flat into the floor.",
+      "Inhale 4s gently through nose into lower ribs/back -> hold 4s -> long quiet 4–6s exhale feeling lower ribs drop -> hold 4s.",
+      "Let jaw, neck, and hips completely unclench."
+    ],
+    check: "Ideal 3–5 min reset after intense lifting or running."
+  },
+
+  // --- WARM-UP PRIMERS & BALLISTICS ---
+  "Low-Dose Pogo Hops or Skips": {
+    feel: "Springy, stiff ankle rebound off the balls of your feet — NOT heavy flat-footed slapping or deep knee bending.",
+    cheats: [
+      "Bending knees deeply (turns it into quad jumps instead of Achilles tendon elasticity).",
+      "Doing too many reps to fatigue (primers should feel crisp, zero burn)."
+    ],
+    fixes: [
+      "Keep ankles stiff, pull toes up mid-air, and aim for super-short, quiet ground contacts.",
+      "Stay tall with stacked ribs; rest full 45s between short sets."
+    ],
+    check: "Stop immediately if Achilles feels heavy or sore (>3/10)."
+  },
+  "Maximal Broad / Box Jump, Heavy KB Swing or Med Ball Slam": {
+    feel: "Crisp, snappy hip-extension power with full freshness — NOT grinding tired metcon reps.",
+    cheats: [
+      "Sloppy, loud, knee-caving landings on jumps or squatting/low-back arching on KB swings.",
+      "Rushing reps without resetting."
+    ],
+    fixes: [
+      "Reset completely between every jump; land softly in an athletic half-squat with knees over toes.",
+      "On KB swings: pure hip hinge snap, stand tall into a rigid standing plank (zero swayback lean-back at top!).",
+      "Keep sets explosive and short with full 60s rest."
+    ],
+    check: "Pure intent, zero fatigue — stop set if pop drops off."
+  },
+  "KB Halo + Rotational Press & Plyo Push-Up": {
+    feel: "Warm, mobile shoulders & crisp pushing snap — NOT flaring ribs during halos or sagging hips on plyo push-ups.",
+    cheats: [
+      "Arching low back or ducking head around the KB instead of circling the KB tightly around your head.",
+      "Sloppy sagging plank on plyo push-ups."
+    ],
+    fixes: [
+      "Keep ribs stacked and head still while circling KB close around ears/base of skull.",
+      "Keep plyo push-ups crisp and explosive (incline hands on bench if needed to stay snappy).",
+      "Full 60s rest — this is neural prep, not fatigue."
+    ],
+    check: "Shoulders should feel oiled and ready, not tired."
+  },
+  "Band / Bar Scapular Pulls & Wrist/Elbow Circles": {
+    feel: "Shoulder blades gliding cleanly down and up with straight elbows — NOT bending elbows.",
+    cheats: [
+      "Bending elbows to pull yourself up instead of isolating scapular depression.",
+      "Rushing wrist/elbow prep before handstands or levers."
+    ],
+    fixes: [
+      "Keep elbows 100% locked straight on scapular pulls; pause 2s with chest lifted and shoulders pulled down away from ears.",
+      "Move wrists slowly through full pain-free extension/flexion circles."
+    ],
+    check: "Sets clean scapular mechanics for pull-ups, dips, and handstands."
+  },
+  "Band / Bar Scapular Pulls, Dislocates & Skin-the-Cat Prep": {
+    feel: "Scapular depression + smooth 360° shoulder glide + gentle biceps/capsule prep — NOT forcing cold end ranges.",
+    cheats: [
+      "Bending elbows during scapular pulls or dislocates.",
+      "Dropping too fast into German Hang without feet support."
+    ],
+    fixes: [
+      "Lock elbows straight on scapular pulls & dislocates; keep ribs stacked down.",
+      "Use feet-assist on Skin-the-Cat as needed and breathe smoothly during the 15–20s German Hang finish."
+    ],
+    check: "Zero pinching in front of shoulders or elbows."
+  },
+
+  // --- ENGINE / CONDITIONING / SKILL SWEEP ---
+  "Continuous Easy Base Run": {
+    feel: "Conversational, smooth aerobic cruise strictly in Z2 (120–150 bpm) — NOT creeping into Z3 gray-zone.",
+    cheats: [
+      "Drifting above 150 bpm on hills or chasing pace when legs are slightly heavy.",
+      "Overstriding with loud heel braking instead of quick midfoot cadence."
+    ],
+    fixes: [
+      "Respect HR cap (120–150 bpm) — hike steep grades if HR climbs above Z2.",
+      "Stay tall (slight forward lean from ankles, not waist) with quiet quick steps and relaxed shoulders."
+    ],
+    check: "Should finish feeling fresher or equal to when you started (RPE 3–4)."
+  },
+  "Weekday Long Run / Mountain Trail Day": {
+    feel: "Steady Z2 aerobic climb & controlled downhill braking — NOT hammering early climbs and blowing up quads.",
+    cheats: [
+      "Racing up early climbs in Z3–Z4 or braking hard with straight knees on technical descents.",
+      "Under-fueling/hydrating on longer mountain outings."
+    ],
+    fixes: [
+      "Stay conversational (RPE 3–5, Z2 120–150 bpm), power-hike steep pitches early.",
+      "On descents: quick light cadence, soft bent knees, slight forward lean over feet (don't lean back braking!)."
+    ],
+    check: "Check patellar/Achilles morning score next day (0–3/10 = green)."
+  },
+  "Post-Easy Run Strides & Short Hill Sprints": {
+    feel: "Fast, relaxed elastic turnover — NOT strained max-effort sprinting or tying up.",
+    cheats: [
+      "Turning strides into 100% all-out races with clenched jaw/shoulders.",
+      "Cutting rest too short so form degrades."
+    ],
+    fixes: [
+      "Accelerate smoothly to ~85–90% fast-but-relaxed form for 15–20s (or 8–10s steep hill).",
+      "Walk/jog full 60–90s between reps so every stride feels snappy and effortless."
+    ],
+    check: "Never strain — if form tightens, back off 5%."
+  },
+  "20–25 Min Continuous Tempo Run": {
+    feel: "Controlled 'comfortably hard' ~1-hour race rhythm (RPE 6–7, Z3–Z4) — NOT starting at 5K race pace.",
+    cheats: [
+      "Going out too hot in the first 5 minutes and redlining into Z5.",
+      "Letting posture collapse/slouch in the final 10 minutes."
+    ],
+    fixes: [
+      "Ease into rhythm over the first 3–5 min; you should be able to speak short 3–4 word phrases.",
+      "Finish feeling like you could have held pace another 5–10 min if needed."
+    ],
+    check: "Smooth even/negative split beats hero first mile."
+  },
+  "10–12 x 400m Track Intervals": {
+    feel: "Crisp mile-to-3K effort (RPE 8–9, Z5 185+ bpm) with tall mechanics — NOT sprinting rep 1 and dying by rep 6.",
+    cheats: [
+      "Blasting the first 2 reps way faster than target average.",
+      "Tightening shoulders/hands and overstriding when tired."
+    ],
+    fixes: [
+      "Aim for identical splits from rep 1 to rep 12 — rep 1 should feel controlled!",
+      "Keep jaw/hands relaxed and drive arms cleanly from shoulders."
+    ],
+    check: "Always separate hard track days from heavy lower lifting (same day run-first, or >=1 easy day between)."
+  },
+  "5 x 1,000m Track Intervals": {
+    feel: "Honest current 5K race effort (RPE 8, Z4 175–185 bpm) — NOT overcooking reps 1–2.",
+    cheats: [
+      "Running rep 1 at 3K pace and fading hard on reps 4–5.",
+      "Collapsing cadence and form in the final 200m."
+    ],
+    fixes: [
+      "Dial into even splits from the start; keep cadence quick when legs get heavy.",
+      "Respect full jog/walk recoveries so quality stays high."
+    ],
+    check: "Even or slightly faster final rep = nailed pacing."
+  },
+  "Progressive Technical Downhill Intervals": {
+    feel: "Light, reactive feet & quad eccentric control — NOT heavy heel-slapping or leaning backward.",
+    cheats: [
+      "Leaning back on heels (hammers patellar tendon and quads!).",
+      "Jumping into steep long descents before tendon adaptation builds."
+    ],
+    fixes: [
+      "Keep chest slightly forward perpendicular to the slope, quick short steps, eyes 3–5m ahead.",
+      "Build downhill volume gradually; check morning patellar tendon score next day."
+    ],
+    check: "Zero sharp patellar pain during or +2 spike next morning."
+  },
+  "Skill Sweep Part 1: Concept2 Row 3 km (2 km Easy + 4 x 10–15 Strokes @ 30–32 spm)": {
+    feel: "Smooth legs-body-arms drive & relaxed recovery — NOT early arm pulling or racing the 3 km.",
+    cheats: [
+      "Pulling with arms before legs finish driving, or rushing up the slide.",
+      "Turning the Skill Sweep into an all-out max test (must stay RPE <= 7!)."
+    ],
+    fixes: [
+      "Hang off straight arms while legs drive hard -> swing hips -> finish arms to lower ribs.",
+      "Keep 2 km easy truly relaxed; hit crisp, powerful strokes on the 4 bursts without redlining."
+    ],
+    check: "Untimed maintenance dose (RPE <= 7) — first session to drop when time/recovery is tight."
+  },
+  "Skill Sweep Part 2: 20-Min Calisthenics Skill Rotation (2–3 Skills x 2–3 Sets @ RPE <= 7)": {
+    feel: "Crisp, fresh technique practice keeping rarely used skills alive — NOT grinding to failure.",
+    cheats: [
+      "Turning skill sets into max-effort grinders (builds fatigue and sloppy motor patterns).",
+      "Skipping rest between sets."
+    ],
+    fixes: [
+      "Pick 2–3 skills, keep every set clean at RPE <= 7 (2–3+ reps/seconds left in tank).",
+      "Take full 60–90s rest so every rep reinforces crisp positioning."
+    ],
+    check: "Quality & tendon safety first — stop any set the second form degrades."
+  },
+  "Skill Sweep Part 3: 50 Chest-to-Floor Burpees (5 x 10 Steady Rhythm)": {
+    feel: "Smooth rhythmic breathing & crisp hip snap — NOT sloppy low-back sagging or redlining.",
+    cheats: [
+      "Snaking hips into hard lumbar hyperextension on the push-up/drop.",
+      "Racing to failure instead of keeping steady rhythm."
+    ],
+    fixes: [
+      "Keep core lightly braced as chest touches floor; jump feet cleanly under hips (wide flat feet) before standing.",
+      "Sync breathing to every rep and stay comfortably at RPE <= 7 across all 5x10."
+    ],
+    check: "Builds relaxed mechanical rhythm for the later 100-burpee block."
+  }
+};
+
+// Extra variant-specific cheat-proofing when a Full-Gym DB / Location / Alternative swap is active
+const VARIANT_FORM_NOTES = [
+  { match: "deep dumbbell bench press", tip: "Full-Gym DB Bench: Lower DBs past torso level with elbows ~45° (not 90° flared), keep shoulder blades pinned into bench, and hold the 20–30s bottom stretch actively — don't let shoulders roll forward." },
+  { match: "seated deep dumbbell shoulder press", tip: "Full-Gym DB Shoulder Press: Keep lower back & ribs stacked against the backrest (zero swayback arch!), lower DB handles beside/below ears on a 4s eccentric, and hold the 20s overhead lockout tall with active shrug." },
+  { match: "heavy dumbbell atg split squat", tip: "Full-Gym DB Split Squat: Hold DBs quietly at sides without leaning forward excessively; keep front big toe & heel glued down, front knee tracking straight over 2nd/3rd toe, and rear leg long." },
+  { match: "goblet dumbbell cossack", tip: "Goblet DB Cossack: Hold DB slightly out in front of chest as a true counterbalance — keeps torso taller and lets your pelvis drop straight down with working heel flat." },
+  { match: "seated db/bb good morning", tip: "Seated Good Morning (Pancake): Sit tall near front edge of bench with wide feet/knees pushed out; hinge strictly from the hips ('abs to bench') with a flat spine — stop the instant low back rounds." },
+  { match: "machine hamstring curl", tip: "Machine Hamstring Curl: Keep hips pinned flat into the pad (don't let butt lift off as you curl!), control a full 4s eccentric, and pause/hold near stretched range without hyperextending knees." },
+  { match: "high-box dumbbell deep step-up", tip: "High-Box DB Step-Up: Zero push-off from trailing foot (lift back toes); keep DBs quiet at sides and lower for a slow 3–4s eccentric watching for any hip hike or knee drift." },
+  { match: "deep cambered db / ring fly", tip: "Deep Cambered DB/Ring Fly: Soft locked elbows, shoulder blades gently tucked down/back, ribs stacked — feel a broad chest stretch, never front-shoulder pinching." },
+  { match: "saddle pose", tip: "Saddle Pose Swap: Gently tuck tailbone (slight PPT) so low back stays long, elevate torso on bolster/bench if tight, and switch to Half-Saddle immediately if knees complain." },
+  { match: "paused front squat", tip: "Paused Front Squat: Keep elbows high, ribs stacked down, and 50/50 pressure across both feet — great built-in counterbalance to stop folding forward." },
+  { match: "roman chair", tip: "Roman Chair Back Extension: Set pad right below hip creases and stop strictly at horizontal (glutes squeezed, ribs stacked) — zero lumbar hyperextension." },
+  { match: "incline dumbbell curl", tip: "Incline DB Curl: Keep shoulders pinned back against bench (don't roll forward!) and pause at 95% elbow extension without snapping joints." }
+];
+
+function getExerciseFormGuide(exName, displayTitle, activeAlt, displayCue) {
+  let base = EXERCISE_FORM_GUIDES[exName] || null;
+  if (!base && displayTitle) {
+    const cleanDisp = String(displayTitle).replace(/^⇄\s*/, "").trim();
+    base = EXERCISE_FORM_GUIDES[cleanDisp] || null;
+  }
+
+  // Check for variant-specific bonus tip
+  const searchStr = `${displayTitle || ""} ${(activeAlt && activeAlt.title) || ""} ${(activeAlt && activeAlt.variant) || ""}`.toLowerCase();
+  let variantTip = "";
+  for (const v of VARIANT_FORM_NOTES) {
+    if (searchStr.includes(v.match)) {
+      variantTip = v.tip;
+      break;
+    }
+  }
+
+  if (base) {
+    return Object.assign({}, base, { variantTip });
+  }
+
+  // Smart fallback for custom / free-text exercises
+  const hay = `${exName || ""} ${displayTitle || ""}`.toLowerCase();
+  let fallback;
+  if (/side plank|copenhagen|adduct|abduct|clamshell|suitcase/.test(hay)) {
+    fallback = {
+      feel: "Lateral core (obliques/QL) + outer glute (abductors) or inner thigh (adductors) — NOT low back or front of hip.",
+      cheats: ["Piking hips backward or twisting pelvis forward/back.", "Hanging passively into the bottom shoulder or hip joint."],
+      fixes: ["Align head, ribs, hips & knees/heels in one straight plane (use a wall behind you if helpful).", "Squeeze glutes, stack ribs over pelvis, and end the hold the second your line breaks."],
+      check: "Compare Left vs. Right effort & hold time — note any clear asymmetry."
+    };
+  } else if (/squat|pistol|step-up|step up|lunge|split squat|cossack/.test(hay)) {
+    fallback = {
+      feel: "Centered quads, glutes & deep hip/ankle control — NOT lateral hip shift, knee cave, or low-back tuck.",
+      cheats: ["Shifting weight subtly onto one foot or letting knees drift unevenly.", "Bracing too early / guarding at the bottom instead of dropping cleanly between heels."],
+      fixes: ["Keep whole foot heavy (big toe + heel glued down) and knee tracking cleanly over 2nd/3rd toe.", "Use a slow 3–4s eccentric; at bottom take 1–2 slow nasal exhales before driving out.", "Reduce load if pelvis tucks or shifts sideways (Position Before Load)."],
+      check: "Front-view phone check occasionally catches subtle hip shifts."
+    };
+  } else if (/rdl|deadlift|hinge|good morning|hamstring|nordic|ghr|curl/.test(hay)) {
+    fallback = {
+      feel: "Hamstrings & glutes loading cleanly through hip hinge or knee flexion — NOT lumbar rounding.",
+      cheats: ["Rounding low back to chase extra depth or twisting pelvis open on single-leg work.", "Bouncing out of the stretched bottom."],
+      fixes: ["Keep spine neutral and both hip headlights pointing straight down/ahead.", "Stop descending the instant low back wants to round — own that exact end range with a pause."],
+      check: "Keep tension in glutes/hamstrings, not low back."
+    };
+  } else if (/plank|hollow|sit-up|sit up|ab |core|pallof|dragonflag|rollout/.test(hay)) {
+    fallback = {
+      feel: "360° trunk cylinder (abs, obliques, glutes) locking ribs to pelvis — NOT low-back arching or hip flexors.",
+      cheats: ["Letting low back sag into swayback or ribs flare up.", "Holding breath instead of controlled breathing behind tension."],
+      fixes: ["Tuck tailbone gently (PPT), stack lower ribs down over pelvis, and squeeze glutes.", "Stop the set/hold the exact moment your low back loses position."],
+      check: "Short max-tension sets beat long slumped holds."
+    };
+  } else if (/pull|row|chin|hang|lever|muscle/.test(hay)) {
+    fallback = {
+      feel: "Lats, upper back & full scapular control — NOT shrugged shoulders or half-reps.",
+      cheats: ["Cutting bottom extension short or letting shoulders creep into ears.", "Flaring ribs into a banana arch."],
+      fixes: ["Control the eccentric to full straight arms with active shoulder pack.", "Keep ribs stacked over pelvis and lead with chest, not chin."],
+      check: "Protect elbow tendons — zero sharp crease/medial elbow pain."
+    };
+  } else if (/push|bench|dip|press|pike|hspu|fly|handstand/.test(hay)) {
+    fallback = {
+      feel: "Target pressing muscles (pecs/delts/triceps) with stacked ribs & stable shoulders — NOT low-back arch or front-shoulder pinch.",
+      cheats: ["Shoulders rolling forward/up toward ears at the bottom stretch.", "Flaring ribs and hyperextending low back to lock out overhead."],
+      fixes: ["Keep shoulder blades controlled (depressed/packed), elbows ~45° from torso, and ribs stacked over pelvis.", "Pause smoothly in the stretched position rather than bouncing off joints."],
+      check: "Zero sharp anterior shoulder or elbow pain allowed."
+    };
+  } else if (/stretch|split|pnf|frog|butterfly|pigeon|pancake|saddle|couch|mobility|dislocate|bridge|thoracic/.test(hay)) {
+    fallback = {
+      feel: "Broad, calm end-range stretch in the target tissue — NOT bony joint pinching or low-back crunching.",
+      cheats: ["Compensating with lumbar arch/rounding or twisted hips to fake extra depth.", "Holding breath and guarding against the stretch."],
+      fixes: ["Square pelvis and stack ribs FIRST, then lower only to your honest uncompensated end range.", "Use slow nasal exhales (and gentle 5s PNF contractions) so your nervous system actually lets go."],
+      check: "Compare Left vs. Right — spend a little extra calm breath time on the stiffer side."
+    };
+  } else {
+    fallback = {
+      feel: "Smooth, controlled tension in the target muscles & joints — NOT momentum or joint pinching.",
+      cheats: ["Rushing the eccentric or adding load faster than clean position allows.", "Holding breath or letting ribs/pelvis lose alignment."],
+      fixes: ["Follow Position Before Load: slow controlled tempo, clean end-range pause, and stacked ribs over pelvis.", "End a set or hold early the moment form breaks."],
+      check: displayCue ? `Protocol focus: ${displayCue}` : "Keep RPE honest and joints feeling 5/5."
+    };
+  }
+  return Object.assign({}, fallback, { variantTip });
+}
+
+function openExerciseInfoModal(exName, eff) {
+  const modal = document.getElementById("exerciseInfoModal");
+  const titleEl = document.getElementById("exInfoModalTitle");
+  const subEl = document.getElementById("exInfoModalSubtitle");
+  const bodyEl = document.getElementById("exInfoModalBody");
+  const demoBtn = document.getElementById("exInfoModalDemoLink");
+  if (!modal || !titleEl || !bodyEl) return;
+
+  const displayTitle = (eff && eff.displayTitle) ? eff.displayTitle : exName;
+  const activeAlt = eff ? eff.activeAlt : null;
+  const displayCue = eff ? eff.displayCue : "";
+  const demoInfo = eff ? eff.demoInfo : getDemoLinkForExercise(exName, null, displayTitle);
+  const guide = getExerciseFormGuide(exName, displayTitle, activeAlt, displayCue);
+
+  titleEl.textContent = `🛡️ ${String(displayTitle).replace(/^⇄\s*/, "")}`;
+  if (subEl) {
+    if (displayTitle && String(displayTitle).replace(/^⇄\s*/, "").trim() !== exName) {
+      subEl.style.display = "block";
+      subEl.textContent = `Base movement: ${exName}`;
+    } else {
+      subEl.style.display = "none";
+      subEl.textContent = "";
+    }
+  }
+
+  let html = "";
+  if (guide.variantTip) {
+    html += `
+      <div class="form-guide-card variant">
+        <div class="form-guide-label" style="color:#d8b4fe;">🔄 Active Variant Tip</div>
+        <div style="color:#f3e8ff;">${escapeHtml(guide.variantTip)}</div>
+      </div>
+    `;
+  }
+  if (guide.feel) {
+    html += `
+      <div class="form-guide-card feel">
+        <div class="form-guide-label" style="color:#6ee7b7;">🎯 What to Feel</div>
+        <div style="color:#e2e8f0;">${escapeHtml(guide.feel)}</div>
+      </div>
+    `;
+  }
+  if (Array.isArray(guide.cheats) && guide.cheats.length > 0) {
+    html += `
+      <div class="form-guide-card cheats">
+        <div class="form-guide-label" style="color:#fca5a5;">🚫 Common Cheats to Catch</div>
+        <ul class="form-guide-list">
+          ${guide.cheats.map(c => `<li>${escapeHtml(c)}</li>`).join("")}
+        </ul>
+      </div>
+    `;
+  }
+  if (Array.isArray(guide.fixes) && guide.fixes.length > 0) {
+    html += `
+      <div class="form-guide-card fixes">
+        <div class="form-guide-label" style="color:#7dd3fc;">🛡️ How to Cheat-Proof It</div>
+        <ul class="form-guide-list">
+          ${guide.fixes.map(f => `<li>${escapeHtml(f)}</li>`).join("")}
+        </ul>
+      </div>
+    `;
+  }
+  if (guide.check) {
+    html += `
+      <div class="form-guide-card check" style="margin-bottom:0;">
+        <div class="form-guide-label" style="color:#fcd34d;">📹 Quick Self-Check</div>
+        <div style="color:#fef3c7;">${escapeHtml(guide.check)}</div>
+      </div>
+    `;
+  }
+  bodyEl.innerHTML = html;
+
+  if (demoBtn) {
+    if (demoInfo && demoInfo.url) {
+      demoBtn.href = demoInfo.url;
+      demoBtn.textContent = demoInfo.label || "🎥 Demo / Guide";
+      demoBtn.style.display = "inline-flex";
+    } else {
+      demoBtn.style.display = "none";
+    }
+  }
+
+  modal.classList.add("open");
+}
+
+function closeExerciseInfoModal() {
+  const modal = document.getElementById("exerciseInfoModal");
+  if (modal) modal.classList.remove("open");
 }
 
 // ============================================================================
@@ -8426,6 +9894,19 @@ function renderExerciseCard(ex, draft, isWarmup, isCustom, customIdx, orderIdx, 
       <div class="watch-match-slot" style="margin-top:8px;"></div>
     `;
     const wRightHdr = wCard.querySelector(".watch-right-hdr");
+    if (wRightHdr) {
+      const wInfoBtn = document.createElement("button");
+      wInfoBtn.type = "button";
+      wInfoBtn.className = "info-tip-btn";
+      wInfoBtn.textContent = "i";
+      wInfoBtn.title = "Cheat-proof form cues & pacing tips";
+      wInfoBtn.setAttribute("aria-label", `Form & cheat-proof tips for ${displayTitle}`);
+      wInfoBtn.onclick = (e) => {
+        e.stopPropagation();
+        openExerciseInfoModal(exName, eff);
+      };
+      wRightHdr.insertBefore(wInfoBtn, wRightHdr.firstChild);
+    }
     const wOrd = createOrderGroup(false);
     if (wOrd && wRightHdr) wRightHdr.insertBefore(wOrd, wRightHdr.firstChild);
 
@@ -8484,6 +9965,19 @@ function renderExerciseCard(ex, draft, isWarmup, isCustom, customIdx, orderIdx, 
       </div>
     `;
     const colRight = colBar.querySelector(".col-right-controls");
+    if (colRight) {
+      const colInfoBtn = document.createElement("button");
+      colInfoBtn.type = "button";
+      colInfoBtn.className = "info-tip-btn";
+      colInfoBtn.textContent = "i";
+      colInfoBtn.title = "Cheat-proof form cues & what to watch for";
+      colInfoBtn.setAttribute("aria-label", `Form & cheat-proof tips for ${displayTitle}`);
+      colInfoBtn.onclick = (e) => {
+        e.stopPropagation();
+        openExerciseInfoModal(exName, eff);
+      };
+      colRight.insertBefore(colInfoBtn, colRight.firstChild);
+    }
     const colOrd = createOrderGroup(false);
     if (colOrd && colRight) colRight.insertBefore(colOrd, colRight.firstChild);
 
@@ -8523,6 +10017,19 @@ function renderExerciseCard(ex, draft, isWarmup, isCustom, customIdx, orderIdx, 
   // Reorder controls (#N ↕ + ↑ + ↓) for current workout
   const ordControls = createOrderGroup(true);
   if (ordControls) rightTop.appendChild(ordControls);
+
+  // Cheat-Proof Form Guide "i" Button
+  const infoBtn = document.createElement("button");
+  infoBtn.type = "button";
+  infoBtn.className = "info-tip-btn";
+  infoBtn.textContent = "i";
+  infoBtn.title = "Cheat-proof form cues & what to watch for";
+  infoBtn.setAttribute("aria-label", `Form & cheat-proof tips for ${displayTitle}`);
+  infoBtn.onclick = (e) => {
+    e.stopPropagation();
+    openExerciseInfoModal(exName, eff);
+  };
+  rightTop.appendChild(infoBtn);
 
   // Clickable Demo / Guide Link Badge
   const demoLink = document.createElement("a");
@@ -10938,6 +12445,9 @@ document.addEventListener("visibilitychange", () => {
     flushUnsyncedRowsToSheet(true);
     flushPendingStravaUploads(true);
   }
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeExerciseInfoModal();
 });
 </script>
 </body>
