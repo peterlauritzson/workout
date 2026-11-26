@@ -1748,6 +1748,9 @@ const MASTER_CATALOG = [
   "Middle Split PNF (Slide-Out or Horse Stance Contract-Relax)",
   "Deep Ring / Suspension Fly Stretch PNF (or Cambered DB Fly PNF)",
   "Saddle Pose (Reclining Hero / Supta Virasana)",
+  "Loaded Bent-Knee Ankle / Calf Dorsiflexion PNF (Knee-Over-Toe)",
+  "Deep Hip-Crease Lizard Lunge PNF (+ Optional Banded Hip-Capsule Glide)",
+  "Bench Butcher's Block Thoracic & Lat PNF (Elbows on Bench w/ Stick)",
   "Supine Legs-Up Nasal Box Breathing",
   "Continuous Easy Base Run",
   "Weekday Long Run / Mountain Trail Day",
@@ -2098,6 +2101,36 @@ const LOCATION_SUBSTITUTIONS = {
       status: "native",
       text: "Native Outdoors: Hands or feet elevated on park bench / low dip frame"
     }
+  },
+  "Loaded Bent-Knee Ankle / Calf Dorsiflexion PNF (Knee-Over-Toe)": {
+    home_gym: {
+      status: "native",
+      text: "Native at Home: Half-kneeling w/ 10–20 kg Barbell Plate resting on front knee (zero ceiling issue)"
+    },
+    outdoor_gym: {
+      status: "native",
+      text: "Native Outdoors: Front foot on park bench / curb leaning bodyweight directly over knee (heel flat)"
+    }
+  },
+  "Deep Hip-Crease Lizard Lunge PNF (+ Optional Banded Hip-Capsule Glide)": {
+    home_gym: {
+      status: "native",
+      text: "Native at Home: Floor Lizard Lunge (optionally anchor heavy Resistance Band to Squat Rack post high in hip crease pulling laterally/back)"
+    },
+    outdoor_gym: {
+      status: "native",
+      text: "Native Outdoors: Lizard Lunge on mat/grass (optionally anchor band to cage post for hip-capsule distraction)"
+    }
+  },
+  "Bench Butcher's Block Thoracic & Lat PNF (Elbows on Bench w/ Stick)": {
+    home_gym: {
+      status: "native",
+      text: "Native at Home: Kneel in front of Flat Bench w/ elbows on pad holding broomstick/PVC (zero ceiling or swayback issue!)"
+    },
+    outdoor_gym: {
+      status: "native",
+      text: "Native Outdoors: Elbows on park bench or low dip bar w/ ribs tucked"
+    }
   }
 };
 
@@ -2205,11 +2238,11 @@ const QUICK_FULLBODY_SESSION = {
 };
 
 // ============================================================================
-// 1B-2. QUICK & DIRTY 35-40 MIN MOBILITY-STRENGTH SESSION (BIG END-RANGE & PNF)
+// 1B-2. QUICK & DIRTY 35-40 MIN MOBILITY-STRENGTH SESSION (FLEXIBILITY-FIRST PNF)
 // ============================================================================
 const QUICK_MOBILITY_SESSION = {
   id: "quick_mobility",
-  name: "🧘⚡ Quick & Dirty Mobility-Strength (35–40m • Big End-Range & PNF)",
+  name: "🧘⚡ Quick & Dirty Mobility-Strength (35–40m • Flexibility-First PNF)",
   category: "Dedicated Mobility",
   legHeavy: false,
   warmups: [
@@ -2218,81 +2251,90 @@ const QUICK_MOBILITY_SESSION = {
       pair: "3m Express Primer",
       sets: 1,
       defaultReps: "30s + 6/side + 4/side",
-      cue: "Continuous 3-min flow: 30s Deep Squat Pry -> 6/side 90/90 Hip Switches -> 4/side Cossack-to-Runner Lunge -> 8 light Band/Dowel Dislocates"
+      cue: "Continuous 3-min flow: 30s Post-Assisted Deep Squat Pry -> 6/side 90/90 Hip Switches -> 4/side Runner Lunge -> 8 light Band/Dowel Dislocates"
     }
   ],
   exercises: [
     {
-      name: "Counterbalance Deep Cossack Squat / Assisted ATG-Pistol Bottom Pry",
-      pair: "Superset A1 (Deep Hip Flexion)",
+      name: "Loaded Bent-Knee Ankle / Calf Dorsiflexion PNF (Knee-Over-Toe)",
+      pair: "Block A1 (Ankle / Calf Unlock)",
       sets: 2,
-      defaultReps: "5/side",
-      defaultHold: "20",
-      cue: "No rest into A2! Hold 5–10 kg plate forward (or rack post) to drop rock-bottom into deep hip & ankle flexion without fighting balance -> stay low shifting side-to-side, prying knee over toe & driving straight heel into floor",
-      holdCue: "Final Rep: 20s rock-bottom deep-hip pry per side (direct bridge to ATG/pistol bottom)"
+      defaultReps: "2–3 PNF/side",
+      defaultHold: "60",
+      cue: "No rest into A2! Half-kneeling w/ 10–20 kg plate/DB resting on front knee (heel glued flat): drive knee straight forward past toes -> 2–3 PNF cycles/side (8s press ball of foot hard into floor -> relax & sink knee further forward 25s)",
+      holdCue: "60–75s total/side (2–3 PNF cycles — track knee-to-wall cm every few weeks!)"
+    },
+    {
+      name: "Deep Hip-Crease Lizard Lunge PNF (+ Optional Banded Hip-Capsule Glide)",
+      pair: "Block A2 (Deep Hip-Crease Joint)",
+      sets: 2,
+      defaultReps: "2–3 PNF/side",
+      defaultHold: "60",
+      cue: "No rest into A3! Front foot wide outside hands, back knee down, spine FLAT (optionally loop heavy band high in front hip crease pulling laterally/back): sink chest/elbows deeply into front hip crease -> 8s press front foot down & knee inward -> relax & sink deeper 25s. Tap ⇄ Alt for Banded Quadruped Rock-Back or Bench Pigeon!",
+      holdCue: "60–75s total/side + finish Set 2 w/ 30–45s Post-Assisted Straight-Back Deep Squat Sit!"
     },
     {
       name: "Weighted Shoulder Dislocates (Dowel/PVC + Plate)",
-      pair: "Superset A2 (360° Shoulders)",
+      pair: "Block A3 (360° Shoulders)",
       sets: 2,
-      defaultReps: "6–8",
-      defaultHold: "15",
-      cue: "Locked elbows, narrowest clean grip w/ 1.25–5 kg plate on dowel/PVC (or heavy band): 4s slow arc overhead & behind back, pausing 3–5s at the tightest sticking zone. Rest 45s after A2.",
-      holdCue: "Final Rep: 15–20s controlled hold right at the sticky overhead/behind-back angle"
+      defaultReps: "6–8 slow",
+      defaultHold: "20",
+      cue: "Locked elbows, narrowest clean grip w/ light plate on dowel/PVC or heavy band: slow 4s arc overhead & behind back, pausing 5–10s right at the sticky zone. Rest 30s after A3.",
+      holdCue: "Final Rep: 15–20s calm hold right at the tightest overhead/behind-back angle"
     },
     {
       name: "Upright Wall Couch Stretch (Strict PPT Bias)",
       pair: "Superset B1 (Hip Flexor PNF)",
       sets: 2,
-      defaultReps: "3 PNF/side",
-      defaultHold: "20",
-      cue: "No rest into B2! Back foot elevated on bench/wall, squeeze rear glute FIRST (zero low-back arch) -> 8s hard back-foot drive into bench/wall -> relax & press torso upright/deeper. (Optional contrast: 4 slow Super-Deep ATG Split Squats right before Couch Stretch — or tap ⇄ Alt!)",
-      holdCue: "15–20s upright sink per PNF cycle w/ glute locked"
+      defaultReps: "2–3 PNF/side",
+      defaultHold: "75",
+      cue: "No rest into B2! Back foot elevated on bench/wall, squeeze rear glute FIRST (zero low-back arch) -> 2–3 PNF cycles/side (8–10s hard back-foot drive into bench/wall -> relax & sink upright 25–30s). No wall? Tap ⇄ Alt for Half-Saddle PNF!",
+      holdCue: "60–90s total end-range time/side w/ glute locked & ribs stacked"
     },
     {
       name: "Deep German Hang / Skin-the-Cat (Feet-Supported if needed)",
       pair: "Superset B2 (Shoulder Ext)",
       sets: 2,
-      defaultReps: "3 + 25s",
-      defaultHold: "25",
-      cue: "3 slow full Skin-the-Cat rotations into deep shoulder extension (feet-assisted on floor/box as needed to chase depth cleanly). Rest 45s after B2.",
-      holdCue: "Final Rep: 20–25s bottom German Hang in deep shoulder extension"
+      defaultReps: "2 rolls + 60s",
+      defaultHold: "60",
+      cue: "2 slow rolls into deep shoulder extension, then keep toes lightly supported on floor/box so you can actually relax deeper into the German Hang for 45–60s without frying your mid-back. Rest 30s after B2.",
+      holdCue: "45–60s feet-supported deep German Hang (breathe slow, let shoulders open)"
     },
     {
       name: "Middle Split PNF (Slide-Out or Horse Stance Contract-Relax)",
       pair: "Superset C1 (Middle Split PNF)",
       sets: 2,
       defaultReps: "3 PNF cycles",
-      defaultHold: "20",
-      cue: "No rest into C2! Sink to deepest wide straddle/middle split (socks/sliders or side-edge of shoes, hands on blocks/bench) -> drive feet/inner thighs HARD inward into floor for 10s -> relax & slide deeper",
-      holdCue: "20s deeper sink per PNF cycle (pelvis neutral/slight anterior tilt — tap ⇄ Alt for 90° Frog / Butterfly)"
+      defaultHold: "75",
+      cue: "No rest into C2! Hands HIGH on a bench/blocks so your back stays flat even when high off the floor -> 3 PNF cycles: drive feet/inner legs HARD inward into floor 10s -> relax & sink deeper 20–25s (⇄ Alt: 90° Frog PNF)",
+      holdCue: "75–90s total end-range time (pelvis neutral/slight anterior tilt, zero spinal rounding)"
     },
     {
       name: "Deep Ring / Suspension Fly Stretch PNF (or Cambered DB Fly PNF)",
       pair: "Superset C2 (Deep Pec/Shoulder PNF)",
       sets: 2,
-      defaultReps: "3 PNF / 4 reps",
-      defaultHold: "20",
-      cue: "Open wide on rings/TRX (or light-mod DBs on bench) into max pec/biceps/anterior-shoulder stretch -> 6–8s hard isometric squeeze inward at end range -> sink deeper. Rest 45s after C2.",
-      holdCue: "15–20s deep crucified end-range stretch hold (zero anterior-joint pinching)"
+      defaultReps: "2–3 PNF cycles",
+      defaultHold: "60",
+      cue: "Stretch-first light load/lean on rings/TRX or bench DBs: open wide into deep pec/biceps stretch -> 8s inward squeeze -> relax & sink wider 20–25s. Rest 30s after C2.",
+      holdCue: "60s total end-range stretch time (zero anterior-joint pinching)"
     },
     {
       name: "Elevated Front Split Isometric Scissor (\"4+1\" Protocol)",
       pair: "Superset D1 (Front Split PNF)",
       sets: 2,
-      defaultReps: "3 PNF/side",
-      defaultHold: "20",
-      cue: "No rest into D2! Hands on blocks/bench, pelvis strictly squared -> 3 PNF scissor cycles/side (drive front heel down & back knee forward hard for 8s -> relax & drop deeper). Tap ⇄ Alt for Seated Straddle Pancake PNF!",
-      holdCue: "15–20s deepest squared split sink / isometric hover per side"
+      defaultReps: "2–3 PNF/side",
+      defaultHold: "75",
+      cue: "No rest into D2! Hands HIGH on bench/blocks so torso stays upright & back stays straight (even if high off floor) -> 2–3 PNF scissor cycles/side (8–10s drive front heel down & back knee forward -> relax & sink 25s). Tap ⇄ Alt for Elevated-Hips Pancake PNF!",
+      holdCue: "60–90s total end-range time/side (pelvis strictly squared)"
     },
     {
-      name: "Elevated Gymnastic Bridge Push-Outs",
-      pair: "Superset D2 (Bridge / Thoracic)",
+      name: "Bench Butcher's Block Thoracic & Lat PNF (Elbows on Bench w/ Stick)",
+      pair: "Superset D2 (Overhead / Thoracic PNF)",
       sets: 2,
-      defaultReps: "6 + 20s",
-      defaultHold: "20",
-      cue: "Hands (or feet) elevated on bench/box so the bend goes into thoracic spine & shoulders (zero lumbar pinch!) -> 5–6 deep push-outs opening armpits past wrists. Tap ⇄ Alt for Cross-Bench Deep Pullover Stretch.",
-      holdCue: "Final Rep: 20s open-chest bridge hold (push floor away hard)"
+      defaultReps: "3 PNF cycles",
+      defaultHold: "75",
+      cue: "Kneel in front of bench w/ elbows on pad holding stick/PVC, ribs tucked (blocks lumbar/mid-back arch!) -> 3 PNF cycles: press elbows HARD down into bench 8s -> relax & melt armpits/chest deeper 20–25s. Tap ⇄ Alt for Elevated Bridge Push-Outs!",
+      holdCue: "75–90s total overhead/thoracic opening (zero low-back swayback)"
     }
   ]
 };
@@ -2616,6 +2658,18 @@ const FULL_GYM_UPGRADES = {
   "Elevated Gymnastic Bridge Push-Outs": {
     status: "native",
     text: "Full Gym: Hands or feet elevated on plyo box / bench so extension targets shoulders & thoracic spine"
+  },
+  "Loaded Bent-Knee Ankle / Calf Dorsiflexion PNF (Knee-Over-Toe)": {
+    status: "native",
+    text: "Full Gym: Half-kneeling w/ 12–24 kg Kettlebell/DB or Plate resting on top of front knee (heel flat)"
+  },
+  "Deep Hip-Crease Lizard Lunge PNF (+ Optional Banded Hip-Capsule Glide)": {
+    status: "native",
+    text: "Full Gym: Floor Lizard Lunge (or loop heavy Resistance Band from rack post high in hip crease pulling laterally/back for capsule distraction!)"
+  },
+  "Bench Butcher's Block Thoracic & Lat PNF (Elbows on Bench w/ Stick)": {
+    status: "native",
+    text: "Full Gym: Elbows on flat bench or plyo box holding PVC pipe/stick, ribs tucked (zero swayback!)"
   }
 };
 
@@ -2693,7 +2747,10 @@ const EXERCISE_DEMO_LINKS = {
   "Weighted Shoulder Dislocates (Dowel/PVC + Plate)": { url: "https://www.youtube.com/results?search_query=weighted+shoulder+dislocates+gymnastics+mobility", label: "🎥 Demo" },
   "Middle Split PNF (Slide-Out or Horse Stance Contract-Relax)": { url: "https://www.daniwinksflexibility.com/bendy-blog/10-minute-middle-split-and-straddle-routine", label: "📖 Dani Winks" },
   "Deep Ring / Suspension Fly Stretch PNF (or Cambered DB Fly PNF)": { url: "https://www.youtube.com/results?search_query=ring+chest+fly+mobility+stretch+gymnastics", label: "🎥 Demo" },
-  "Saddle Pose (Reclining Hero / Supta Virasana)": { url: "https://www.youtube.com/results?search_query=saddle+pose+supta+virasana+half+saddle+pnf+quad+stretch", label: "🎥 Demo" }
+  "Saddle Pose (Reclining Hero / Supta Virasana)": { url: "https://www.youtube.com/results?search_query=saddle+pose+supta+virasana+half+saddle+pnf+quad+stretch", label: "🎥 Demo" },
+  "Loaded Bent-Knee Ankle / Calf Dorsiflexion PNF (Knee-Over-Toe)": { url: "https://www.youtube.com/results?search_query=loaded+ankle+dorsiflexion+stretch+soleus+pnf+squat+university", label: "🎥 Demo" },
+  "Deep Hip-Crease Lizard Lunge PNF (+ Optional Banded Hip-Capsule Glide)": { url: "https://www.youtube.com/results?search_query=banded+hip+capsule+mobilization+lizard+lunge+deep+squat+flexion", label: "🎥 Demo" },
+  "Bench Butcher's Block Thoracic & Lat PNF (Elbows on Bench w/ Stick)": { url: "https://www.youtube.com/results?search_query=butchers+block+stretch+thoracic+lat+mobility+pnf", label: "🎥 Demo" }
 };
 
 function getDemoLinkForExercise(exName, activeAltUrl, displayTitle) {
@@ -4016,6 +4073,96 @@ const EXERCISE_ALTERNATIVES = {
         demoUrl: "https://www.youtube.com/results?search_query=crab+reach+thoracic+bridge+mobility"
       }
     ]
+  },
+  "Loaded Bent-Knee Ankle / Calf Dorsiflexion PNF (Knee-Over-Toe)": {
+    near: [
+      {
+        title: "Banded Joint-Distraction Ankle Dorsiflexion Mobilization (Band Low on Ankle)",
+        cue: "Pinchy front-of-ankle fix: Loop heavy band low across front of ankle crease pulling backward -> rock knee over toes + 8s PNF ball-of-foot press -> 25s sink",
+        variant: "Banded Ankle Joint Mobilization PNF",
+        demoUrl: "https://www.youtube.com/results?search_query=banded+ankle+dorsiflexion+mobilization+squat+university"
+      },
+      {
+        title: "Elevated-Foot Bodyweight Soleus PNF (Foot on Bench / Box)",
+        cue: "Zero-weight swap: Place front foot on flat bench/box, drive torso & knee straight forward over toes (heel glued) -> 8s calf press -> 25s sink/side",
+        variant: "Bench-Elevated Soleus PNF",
+        demoUrl: "https://www.youtube.com/results?search_query=elevated+foot+ankle+dorsiflexion+stretch+soleus"
+      }
+    ],
+    far: [
+      {
+        title: "Single-Leg Deficit Calf / Bent-Knee Soleus Stretch Hold (60s/side)",
+        cue: "Straight-leg + bent-knee calf hang on step/plate: 30s straight-knee gastroc + 30s bent-knee soleus w/ 8s PNF heel-lift squeeze",
+        variant: "Deficit Calf + Soleus PNF Hold",
+        demoUrl: "https://www.youtube.com/results?search_query=single+leg+calf+raise+bent+knee+soleus+tibialis+raise+atg"
+      },
+      {
+        title: "Heels-Elevated Post-Assisted Deep Squat Sit & Knee-Over-Toe Pry",
+        cue: "Direct squat integration: Heels on small plates holding rack post (dead-straight back) -> shift weight knee-over-toe left & right for 60–90s",
+        variant: "Post-Assisted Deep Squat Ankle Pry",
+        demoUrl: "https://www.youtube.com/results?search_query=assisted+deep+squat+ankle+hip+pry+mobility"
+      }
+    ]
+  },
+  "Deep Hip-Crease Lizard Lunge PNF (+ Optional Banded Hip-Capsule Glide)": {
+    near: [
+      {
+        title: "Banded Quadruped Hip-Capsule Rock-Back PNF (Posterior/Lateral Distraction)",
+        cue: "Pure hip-joint flexion decompression (zero ankle/hamstring interference!): Loop heavy band high in hip crease pulling back/out -> flat spine rocking hips deep toward heels + 8s PNF knee-press into floor -> 25s sink",
+        variant: "Banded Quadruped Hip-Capsule Rock-Back",
+        demoUrl: "https://www.youtube.com/results?search_query=banded+hip+capsule+mobilization+quadruped+rock+back+squat+university"
+      },
+      {
+        title: "Bench Pigeon Good Morning PNF (Elevated External Hip Capsule)",
+        cue: "Posterior/external hip-capsule opener: Front shin flat on bench, pelvis level -> 8s press shin down into bench -> 25s flat-back hinge deeper into hip crease",
+        variant: "Bench Pigeon Hip-Capsule PNF",
+        demoUrl: "https://www.tiktok.com/@kneesovertoesguy/video/7150804246919826734"
+      }
+    ],
+    far: [
+      {
+        title: "Post-Assisted Straight-Back Deep Squat Sit & Hip-Crease Pry (60–90s)",
+        cue: "Hold rack/doorframe upright so back stays 100% straight -> sink rock-bottom into hip creases, pry knees out & shift side-to-side (heels elevated if needed)",
+        variant: "Post-Assisted Straight-Back Deep Squat Sit",
+        demoUrl: "https://www.youtube.com/results?search_query=post+assisted+deep+squat+hip+mobility+hold"
+      },
+      {
+        title: "Counterbalance Deep Cossack Squat / Assisted ATG-Pistol Bottom Pry",
+        cue: "Once ankles & hip crease allow straight-back depth: Hold 5–10 kg plate forward (or rack post) -> low side-to-side Cossack pry + 20s/side hold",
+        variant: "Counterbalance Deep Cossack Pry",
+        demoUrl: "https://www.youtube.com/results?search_query=counterbalance+cossack+squat+deep+hip+mobility+pry"
+      }
+    ]
+  },
+  "Bench Butcher's Block Thoracic & Lat PNF (Elbows on Bench w/ Stick)": {
+    near: [
+      {
+        title: "Cross-Bench Deep Dumbbell / Barbell Pullover Stretch (60s Hold/PNF)",
+        cue: "Loaded overhead lat & thoracic stretch: Upper back across bench, hips dropped -> light-mod load lowering overhead for 45–60s calm sink w/ 8s PNF pull-up tension",
+        variant: "Cross-Bench Deep Pullover Stretch",
+        demoUrl: "https://www.youtube.com/results?search_query=cross+bench+dumbbell+pullover+mobility+stretch"
+      },
+      {
+        title: "Lumbar-Blocked Bench Thoracic Meltdown + Thumbs-Up Overhead Lifts",
+        cue: "Anti-swayback thoracic opener: Pin yoga block/roller between belly & thighs -> 6–8 thumbs-up lifts + 45s thoracic meltdown",
+        variant: "Lumbar-Blocked Thoracic Meltdown",
+        demoUrl: "https://www.daniwinksflexibility.com/bendy-blog/why-your-upper-back-sucks-at-backbending-and-how-to-make-it-suck-less"
+      }
+    ],
+    far: [
+      {
+        title: "Elevated Gymnastic Bridge Push-Outs (Hands or Feet on Bench/Box)",
+        cue: "Full-body anterior-chain & overhead bridge: Press through straight arms opening armpits past wrists -> 5–6 slow push-outs + 20s hold",
+        variant: "Elevated Gymnastic Bridge Push-Outs",
+        demoUrl: "https://www.daniwinksflexibility.com/bendy-blog/protecting-your-low-back-when-backbending"
+      },
+      {
+        title: "Passive / Active Dead-Hang Lat & Thoracic Decompression (60s)",
+        cue: "Zero-setup overhead traction: Hang from bar w/ toes lightly touching floor if needed -> breathe into ribs & let lats/thoracic lengthen for 60s",
+        variant: "Dead-Hang Lat & Thoracic Decompression",
+        demoUrl: "https://www.youtube.com/results?search_query=dead+hang+shoulder+lat+thoracic+mobility"
+      }
+    ]
   }
 };
 
@@ -4601,8 +4748,8 @@ function classifyExerciseImpact(exName) {
     ["left_hip_lat", "spine_core"].forEach(d => domains.add(d));
     s = 1.2; m = 0.8;
   }
-  if (n.includes("90/90") || n.includes("pigeon") || n.includes("figure-4") || n.includes("internal rotation lift") || n.includes("hip internal rotation")) {
-    ["glute_med", "glutes", "adductors"].forEach(z => zones.add(z));
+  if (n.includes("90/90") || n.includes("pigeon") || n.includes("figure-4") || n.includes("internal rotation lift") || n.includes("hip internal rotation") || n.includes("hip-crease") || n.includes("hip crease") || n.includes("lizard") || n.includes("hip-capsule")) {
+    ["glute_med", "glutes", "adductors", "hip_flexors"].forEach(z => zones.add(z));
     ["hip_rot", "left_hip_lat"].forEach(d => domains.add(d));
     s = 0.8; m = 1.6;
   }
